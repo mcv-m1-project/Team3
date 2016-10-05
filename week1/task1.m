@@ -57,9 +57,9 @@ function [ output_args ] = task1( pathGt, pathMask )
     disp( sprintf('stdAspectRatio: %f \n', std(cell2mat(gtObjs(:,4)))));
     
     
-    sprintf('Frequency of Appearance:\n');
+    disp (sprintf('Frequency of Appearance:\n'));
     for i=1:size(c,1)
-        sprintf('%s: %f \n', cell2mat(clases(i)), cell2mat(reps(i)));
+        disp (sprintf('%s: %f \n', cell2mat(clases(i)), reps(i)));
     end
     
     %output_args = [gtObjs, clases, reps];
