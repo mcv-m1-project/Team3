@@ -61,7 +61,9 @@ function [ output_args ] = task1( pathGt, pathMask )
         disp (sprintf('%s: %f \n', cell2mat(clases(i)), reps(i)));
     end
     
-    %output_args = [gtObjs, clases, reps];
+    
+    error
+    output_args = gtObjs;
     
 end
 
