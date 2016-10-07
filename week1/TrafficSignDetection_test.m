@@ -85,6 +85,19 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
         case 'normrgb'
             pixelCandidates = im(:,:,1)>100;
             
+
+        case 'paper'   
+            t01, t02, t03, t04, t05=0;
+            imrgb=im;
+            im=rgb2hsv(im);
+            pixelCandidates = im (:,:,1)>0.5 && im (:,:,2)> t01; %red
+            pixelCandidates = pixelCandidates + (im(:,:,1)>0.6667 && im(:,:,1)>0.5 && im(:,:,2)>t02); %blue
+            whiteR = imrgb(:,:,1)> t03;
+            whiteG = imrgb(:,:,2)> t04;
+            whiteB = imrgb(:,:,3)> t05;
+            W = Max(whiteR,whiteG,whiteB);
+            pixelCandidates = pixelCandidates + W;
+            
         otherwise
             error('Incorrect color space defined');
             return
