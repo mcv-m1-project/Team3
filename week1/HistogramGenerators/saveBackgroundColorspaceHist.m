@@ -1,4 +1,4 @@
-function [ yHist, xHist] = getAcumHist( imgPaths, maskPaths, colorSpace)
+function [ yHist, xHist] = saveBackgroundColorspaceHist( imgPaths, maskPaths, colorSpace)
 %   expects a lists of rgb image paths and the correlative mask paths of
 %   desired element to include into the acummulated histogram. Also gets a
 %   colorSpace value to get the histogram based on that defined space.
@@ -35,6 +35,8 @@ function [ yHist, xHist] = getAcumHist( imgPaths, maskPaths, colorSpace)
         xHist(1:end,i) = 0:(size(xHist,1)-1);
     end
     
+    save(strcat(destPath,'/', colorSpace, '_yHist.mat'), strcat(colorSpace, '_yHist'));
+    save(strcat(destPath,'/', colorSpace, '_xHist.mat'), strcat(colorSpace, '_xHist'));
         
 end
 

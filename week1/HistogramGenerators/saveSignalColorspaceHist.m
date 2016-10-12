@@ -1,4 +1,4 @@
-function [ output_args ] = getSignalsHist_nosequenombreponer_lohaceporgrupocolor( colorSpace, destPath, grops)
+function [ output_args ] = saveSignalColorspaceHist( colorSpace, destPath, groups)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
     colorSpace = lower(colorSpace);
