@@ -9,7 +9,7 @@ function [ yHist, xHist] = getAcumHist( imgPaths, maskPaths, colorSpace)
     xHist = zeros(256, size(imgBase, 3));
 
     for i=2:size(imgPaths,1)
-        mask = imread(maskPaths(i,:))>0;
+        mask = imread(maskPaths(i,:))==0;
         
         img = imread(imgPaths(i,:));
         img = deleteElements(img, mask);
