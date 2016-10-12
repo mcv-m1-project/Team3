@@ -7,6 +7,8 @@ function [ output_args ] = task2(pathGt, pathImg, pathMask)
     % Read the dataset
     dataset = dataset2mat(pathGt, pathImg, pathMask);
     
+    groups = groupClasses(dataset);
+    save('groups.mat', 'groups');
     % Split data into train and validation
     dataSplit = split(dataset, 0.7);
     

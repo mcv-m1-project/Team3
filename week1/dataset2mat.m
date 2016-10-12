@@ -30,6 +30,9 @@ function [ output_args ] = dataset2mat( pathGt, pathImg, pathMask )
             image = imread(strcat(pathImg, files(i).name));
             mask = imread(strcat(pathMask, 'mask.', files(i).name(1:end-3), 'png'));
             
+            image = strcat(pathImg, files(i).name);
+            mask = strcat(pathMask, 'mask.', files(i).name(1:end-3), 'png');
+            
             % Store each sample of the dataset into the cell array {image, mask, boundingbox}
             dataset{i, 1} = {image, mask, bb};
             
