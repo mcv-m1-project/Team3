@@ -1,7 +1,7 @@
 %
 % Template example for using on the validation set.
 % 
- 
+
 function TrafficSignDetection(directory, pixel_method, window_method, decision_method)
     % TrafficSignDetection
     % Perform detection of Traffic signs on images. Detection is performed first at the pixel level
@@ -16,6 +16,8 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     %    'window_method'     'SegmentationCCL' or 'SlidingWindow' (Weeks 3-5)
     %    'decision_method'   'GeometricHeuristics' or 'TemplateMatching' (Weeks 4-5)
 
+    % Guillem - to use evaluation functions
+    addpath('evaluation')
 
     global CANONICAL_W;        CANONICAL_W = 64;
     global CANONICAL_H;        CANONICAL_H = 64;
@@ -48,9 +50,16 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     
     files = ListFiles(directory);
     
-    for i=1:size(files,1),
-
-        i
+    nFiles = size(files, 1);
+    disp(sprintf('%d images to evaluate', nFiles));
+    
+    tic
+    
+    for i=1:nFiles
+        
+        if (mod(i, 25) == 0)
+            i
+        end
         
         % Read file
         im = imread(strcat(directory,'/',files(i).name));
@@ -79,15 +88,26 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     end
 
     % Plot performance evaluation
-    [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity] = PerformanceEvaluationPixel(pixelTP, pixelFP, pixelFN, pixelTN);
+    [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity, pixelF1] = PerformanceEvaluationPixel(pixelTP, pixelFP, pixelFN, pixelTN);
     % [windowPrecision, windowAccuracy] = PerformanceEvaluationWindow(windowTP, windowFN, windowFP); % (Needed after Week 3)
     
-    [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity]
+    [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity, pixelF1]
+    
+    disp(sprintf('Precision: %f', pixelPrecision));
+    disp(sprintf('Accuracy: %f', pixelAccuracy));
+    disp(sprintf('Specificity: %f', pixelSpecificity));
+    disp(sprintf('Sensitivity (Recall): %f', pixelSensitivity));
+    disp(sprintf('F1 score: %f', pixelF1));
+    disp(sprintf('TP: %f', pixelTP));
+    disp(sprintf('FP: %f', pixelFP));
+    disp(sprintf('FN: %f', pixelFN));
+    
     % [windowPrecision, windowAccuracy]
     
     %profile report
     %profile off
-    toc
+    elapsed = toc;    
+    disp(sprintf('Time per frame: %f s.', elapsed/nFiles));
 end
  
 

@@ -1,4 +1,4 @@
-function [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity] = PerformanceEvaluationPixel(pixelTP, pixelFP, pixelFN, pixelTN)
+function [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity, pixelF1] = PerformanceEvaluationPixel(pixelTP, pixelFP, pixelFN, pixelTN)
     % PerformanceEvaluationPixel
     % Function to compute different performance indicators (Precision, accuracy, 
     % specificity, sensitivity) at the pixel level
@@ -17,5 +17,6 @@ function [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity] = P
     pixelPrecision = pixelTP / (pixelTP+pixelFP);
     pixelAccuracy = (pixelTP+pixelTN) / (pixelTP+pixelFP+pixelFN+pixelTN);
     pixelSpecificity = pixelTN / (pixelTN+pixelFP);
-    pixelSensitivity = pixelTP / (pixelTP+pixelFN);
+    pixelSensitivity = pixelTP / (pixelTP+pixelFN); % recall
+    pixelF1 = 2*pixelTP / (2*pixelTP + pixelFP + pixelFN);
 end

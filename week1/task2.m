@@ -15,6 +15,7 @@ function [ output_args ] = task2(pathGt, pathImg, pathMask)
     trainSplit = dataSplit{1,1};
     valSplit = dataSplit{2,1};
     
+    CreateSplitFolder(trainSplit, valSplit);    
 end
 
 function [ output_args ] = groupClasses(dataset)
@@ -78,4 +79,56 @@ function [ output_args ] = split( dataset, trainRatio)
        
     end
     output_args = {trainSplit; valSplit};
+end
+
+function CreateSplitFolder(trainSplit, valSplit)
+    % CreateSplitFolder
+    % Function to create the folders containing the train and val splits. 
+    %
+    % [] = createSplitFolder(trainSplit, valSplit)
+    %
+    %    Parameter name     Value
+    %    --------------     -----
+    %    'trainSplit'       Cell array containing train images
+    %    'valSplit'         Cell array containing val images
+    %
+
+    % create split folders
+    mkdir('../', 'SplitDataset/');
+    mkdir('../SplitDataset/', 'train/mask');
+    mkdir('../SplitDataset/', 'val/mask');
+    mkdir('../SplitDataset/', 'train/gt');
+    mkdir('../SplitDataset/', 'val/gt');
+    
+    disp(sprintf('Creating train and val directories.'));
+    
+    % copy files in train split directory
+    for i=1:size(trainSplit, 1)% for each label
+        for j=1:size(trainSplit{i,1},1) % for each image
+            img_filename = trainSplit{i,1}{j,1}{1,1};
+            img_mask = strrep(img_filename, '/train/', '/train/mask/mask.');
+            img_mask = strrep(img_mask, '.jpg', '.png');
+            img_gt = strrep(img_filename, '/train/', '/train/gt/gt.');
+            img_gt = strrep(img_gt, '.jpg', '.txt');
+            
+            copyfile(img_filename, strrep(img_filename, 'DataSetDelivered', 'SplitDataset'));
+            copyfile(img_mask, strrep(img_mask, 'DataSetDelivered', 'SplitDataset'));
+            copyfile(img_gt, strrep(img_gt, 'DataSetDelivered', 'SplitDataset'));
+        end
+    end
+    
+    % copy files in val split directory
+    for i=1:size(valSplit, 1)% for each label
+        for j=1:size(valSplit{i,1},1) % for each image
+            img_filename = valSplit{i,1}{j,1}{1,1};
+            img_mask = strrep(img_filename, '/train/', '/train/mask/mask.');
+            img_mask = strrep(img_mask, '.jpg', '.png');
+            img_gt = strrep(img_filename, '/train/', '/train/gt/gt.');
+            img_gt = strrep(img_gt, '.jpg', '.txt');
+            
+            copyfile(img_filename, strrep(img_filename, 'DataSetDelivered/train/', 'SplitDataset/val/'));
+            copyfile(img_mask, strrep(img_mask, 'DataSetDelivered/train/', 'SplitDataset/val/'));
+            copyfile(img_gt, strrep(img_gt, 'DataSetDelivered/train/', 'SplitDataset/val/'));
+        end
+    end
 end
