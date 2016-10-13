@@ -7,13 +7,16 @@ function [ output_args ] = task2(pathGt, pathImg, pathMask)
     % Read the dataset
     dataset = dataset2mat(pathGt, pathImg, pathMask);
     
-    groups = groupClasses(dataset);
-    save('groups.mat', 'groups');
+    %groups = groupClasses(dataset);
+    
     % Split data into train and validation
     dataSplit = split(dataset, 0.7);
     
     trainSplit = dataSplit{1,1};
     valSplit = dataSplit{2,1};
+    save('trainSplit.mat', 'trainSplit');
+    save('valSplit.mat', 'valSplit');
+    
     
     CreateSplitFolder(trainSplit, valSplit);    
 end

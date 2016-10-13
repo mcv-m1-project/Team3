@@ -9,8 +9,8 @@ function [ output_args ] = saveSignalColorspaceHist( colorSpace, destPath, group
        mkdir(strcat(destPath,'/', int2str(i)));
        group = groups{i};
        
-       yHist = zeros(256, 3);
-       xHist = zeros(256, 3);
+       yHist = zeros(512, 1);
+       xHist = zeros(512, 1);
        
        for j=1:size(group,1)
            picture = group{j};
@@ -30,8 +30,10 @@ function [ output_args ] = saveSignalColorspaceHist( colorSpace, destPath, group
                    cImg = applycform(cImg, colorTransform);
                elseif strcmp(colorSpace, 'hsv')
                    cImg = rgb2hsv(cImg);
+                   cImg = cImg .* 255;
                elseif strcmp(colorSpace, 'xyz')
                    cImg = rgb2xyz(cImg);
+                   cImg = cImg .* 255;
                end
         
                
@@ -39,13 +41,15 @@ function [ output_args ] = saveSignalColorspaceHist( colorSpace, destPath, group
            end           
        end
        
-       yHist(1,:) = yHist(2,:);
-       yHist(256,:) = yHist(255,:);
+       yHist(1) = yHist(2);
+       yHist(:) = yHist(:)/sum(yHist(:));
+       xHist(1:512) = 0:511;
+       %yHist(256,:) = yHist(255,:);
        
-       for j=1:3
-           yHist(:,j) = yHist(:,j)/sum(yHist(:,j));
-           xHist(1:end,j) = 0:(size(xHist,1)-1);
-       end
+%        for j=1:3
+%            yHist(:,j) = yHist(:,j)/sum(yHist(:,j));
+%            xHist(1:end,j) = 0:(size(xHist,1)-1);
+%        end
        
        save(strcat(destPath,'/', int2str(i), '/', colorSpace, '_yHist.mat'), 'yHist');
        save(strcat(destPath,'/', int2str(i), '/', colorSpace, '_xHist.mat'), 'xHist');
