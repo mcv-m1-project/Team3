@@ -17,6 +17,9 @@ function Guillem_best_th()
     nFiles = size(files, 1);
     disp(sprintf('Training with %d Files', nFiles));
     
+    red_thresh = [];
+    blue_thresh = [];
+    
     for i=1:nFiles
         if (mod(i, 25) == 0)
             i
@@ -34,7 +37,6 @@ function Guillem_best_th()
         bboxes=textscan(fid,'%f %f %f %f %s','delimiter',' ');
         fclose(fid);
         
-        imshow(im);
         segmentation = zeros(size(mask));
         
         for j=1:length(bboxes{1})
@@ -60,11 +62,12 @@ function Guillem_best_th()
             
             mean_w = mean([mean_r mean_g mean_b]);
             
-
+            % We try to unmask the white parts of the traffic signal in
+            % order to not use the white color when calculating colors
             mask_signal(mask_signal) = xor(mask_signal(mask_signal), (im_r(mask_signal) > mean_w & im_g(mask_signal) > mean_w & im_b(mask_signal) > mean_w));
             
-            k = waitforbuttonpress;
-            imshow(mask_signal)
+%             imshow(mask_signal)
+%             k = waitforbuttonpress;
             
             if strcmp(label, 'A') || strcmp(label, 'B') || strcmp(label, 'C')
                 % Define threshold to find red signals
@@ -73,26 +76,45 @@ function Guillem_best_th()
                 th_b = mean(im_b(mask_signal));
                 color = 'red';
                 thresh = [th_r, th_g, th_b]
+                red_thresh = [red_thresh; thresh]
                 pixelCandidates = CandidateGenerationPixel_Color(im, thresh, color);
+            elseif strcmp(label, 'E') % red and blue signal
+                % red
+                th_r = min(im_r(mask_signal));
+                th_g = mean(im_g(mask_signal));
+                th_b = mean(im_b(mask_signal));
+                color = 'red';
+                thresh = [th_r, th_g, th_b]
+                red_thresh = [red_thresh; thresh]
+                pixelCandidates = CandidateGenerationPixel_Color(im, thresh, color);
+                
+                % blue
+                th_r = mean(im_r(mask_signal));
+                th_g = mean(im_g(mask_signal));
+                th_b = min(im_b(mask_signal));
+                color = 'blue';
+                thresh = [th_r, th_g, th_b]
+                blue_thresh = [blue_thresh; thresh]
+                pixelCandidates = pixelCandidates | CandidateGenerationPixel_Color(im, thresh, color);
             else
                 th_r = mean(im_r(mask_signal));
                 th_g = mean(im_g(mask_signal));
                 th_b = min(im_b(mask_signal));
                 color = 'blue';
                 thresh = [th_r, th_g, th_b]
+                blue_thresh = [blue_thresh; thresh]
                 pixelCandidates = CandidateGenerationPixel_Color(im, thresh, color);
             end
 
-            
-            
             segmentation = segmentation | pixelCandidates;
         end
         
-        k = waitforbuttonpress;
-        imshow(segmentation);
-        k = waitforbuttonpress;
+%         subplot(1,2,1), imshow(im);
+%         subplot(1,2,2), imshow(segmentation);
+%         k = waitforbuttonpress;
     end
-    
+    size(red_thresh)
+    a = 1;
 end
 
 function [pixelCandidates] = CandidateGenerationPixel_Color(im, thresh, color)
