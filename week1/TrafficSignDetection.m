@@ -63,11 +63,10 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % Read file
         im = imread(strcat(directory,'/',files(i).name));
-     
+             
         % Candidate Generation (pixel) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         pixelCandidates = CandidateGenerationPixel_Color(im, pixel_method);
-        
-        
+                
         % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % windowCandidates = CandidateGenerationWindow_Example(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
         
@@ -129,13 +128,38 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
 
     switch space
         case 'normrgb'
-            %pixelCandidates = im(:,:,1)>100;
+            % normalize rgb
+            im = NormRGB(double(im));
             
-            r_th = [12.3786   58.1643   54.4500];
+            r_th = [0.0830    0.2943    0.2870];
             red_pixelCandidates = im(:,:,1) > r_th(1) & im(:,:,2) < r_th(2) & im(:,:,3) < r_th(3);
             
-            b_th = [44.0621   60.0373   24.4286];
+            b_th = [0.2625    0.3121    0.1951];
             blue_pixelCandidates = im(:,:,1) < b_th(1) & im(:,:,2) < b_th(2) & im(:,:,3) > b_th(3);
+            
+            pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
+        
+        case 'hsv'
+            imhsv = rgb2hsv(im);
+            im_h = imhsv(:,:,1);
+            im_s = imhsv(:,:,2);
+            
+            r_th = [0.9    0.1     0.5];
+            red_pixelCandidates = im_h > r_th(1) | im_h < r_th(2) & im_s > r_th(3);
+            
+            b_th = [0.5    0.7     0.5];
+            blue_pixelCandidates = im_h > b_th(1) & im_h < b_th(2) & im_s > b_th(3);
+            
+            pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
+            
+        case 'lab'
+            imlab = rgb2lab(im);
+                        
+            im_a = imlab(:,:,2);
+            im_b = imlab(:,:,3);
+            
+            red_pixelCandidates = im_a > 0;
+            blue_pixelCandidates = im_b < 0;
             
             pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
             

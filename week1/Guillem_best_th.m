@@ -25,10 +25,13 @@ function Guillem_best_th()
         end
         
         % Read file
-        im = imread(strcat(train_set,'/',files(i).name));
+        im = double(imread(strcat(train_set,'/',files(i).name)));
+        % normalize RGB
+        im = NormRGB(im);
         im_r = im(:,:,1);
         im_g = im(:,:,2);
-        im_b = im(:,:,3); 
+        im_b = im(:,:,3);
+        
         mask = imread(strcat(train_set, '/mask/mask.',strrep(files(i).name, '.jpg', '.png'))) > 0;
         gt = strcat(train_set, '/gt/gt.',strrep(files(i).name, '.jpg', '.txt'));
         
@@ -52,18 +55,7 @@ function Guillem_best_th()
                 continue;
             end 
             
-            % mean intensity on the red channel for that signal
-            mean_r = mean(im_r(mask_signal));
-            % mean intensity on the green channel for that signal
-            mean_g = mean(im_g(mask_signal));
-            % mean intensity on the blue channel for that signal
-            mean_b = mean(im_b(mask_signal));
-            
-            mean_w = mean([mean_r mean_g mean_b]);
-            
-            % We try to unmask the white parts of the traffic signal in
-            % order to not use the white color when calculating colors
-            mask_signal(mask_signal) = xor(mask_signal(mask_signal), (im_r(mask_signal) > mean_w & im_g(mask_signal) > mean_w & im_b(mask_signal) > mean_w));
+            %mask_signal(mask_signal) = xor(mask_signal(mask_signal), (im_r(mask_signal) > 0.27 & im_g(mask_signal) > 0.27 & im_b(mask_signal) > 0.27));
             
 %             imshow(mask_signal)
 %             k = waitforbuttonpress;
@@ -75,7 +67,7 @@ function Guillem_best_th()
                 th_b = mean(im_b(mask_signal));
                 color = 'red';
                 thresh = [th_r, th_g, th_b]
-                red_thresh = [red_thresh; thresh]
+                red_thresh = [red_thresh; thresh];
                 pixelCandidates = CandidateGenerationPixel_Color(im, thresh, color);
             elseif strcmp(label, 'E') % red and blue signal
                 % red
@@ -84,7 +76,7 @@ function Guillem_best_th()
                 th_b = mean(im_b(mask_signal));
                 color = 'red';
                 thresh = [th_r, th_g, th_b]
-                red_thresh = [red_thresh; thresh]
+                red_thresh = [red_thresh; thresh];
                 pixelCandidates = CandidateGenerationPixel_Color(im, thresh, color);
                 
                 % blue
@@ -93,7 +85,7 @@ function Guillem_best_th()
                 th_b = min(im_b(mask_signal));
                 color = 'blue';
                 thresh = [th_r, th_g, th_b]
-                blue_thresh = [blue_thresh; thresh]
+                blue_thresh = [blue_thresh; thresh];
                 pixelCandidates = pixelCandidates | CandidateGenerationPixel_Color(im, thresh, color);
             else
                 th_r = mean(im_r(mask_signal));
@@ -101,7 +93,7 @@ function Guillem_best_th()
                 th_b = min(im_b(mask_signal));
                 color = 'blue';
                 thresh = [th_r, th_g, th_b]
-                blue_thresh = [blue_thresh; thresh]
+                blue_thresh = [blue_thresh; thresh];
                 pixelCandidates = CandidateGenerationPixel_Color(im, thresh, color);
             end
 
@@ -110,6 +102,9 @@ function Guillem_best_th()
         
 %         subplot(1,2,1), imshow(im);
 %         subplot(1,2,2), imshow(segmentation);
+%         imshow(im);
+%         a = ginput(1)
+%         im(int16(a(2)), int16(a(1)), :)
 %         k = waitforbuttonpress;
     end
     disp(sprintf('Red th: '));
