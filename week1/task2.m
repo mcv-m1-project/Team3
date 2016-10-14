@@ -16,8 +16,7 @@ function [ output_args ] = task2(pathGt, pathImg, pathMask)
     valSplit = dataSplit{2,1};
     save('trainSplit.mat', 'trainSplit');
     save('valSplit.mat', 'valSplit');
-    
-    
+        
     CreateSplitFolder(trainSplit, valSplit);    
 end
 

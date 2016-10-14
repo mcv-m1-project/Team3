@@ -13,7 +13,6 @@ function Guillem_best_th()
     train_set = '../SplitDataset/train';
     
     files = ListFiles(train_set);
-    
     nFiles = size(files, 1);
     disp(sprintf('Training with %d Files', nFiles));
     
@@ -113,8 +112,10 @@ function Guillem_best_th()
 %         subplot(1,2,2), imshow(segmentation);
 %         k = waitforbuttonpress;
     end
-    size(red_thresh)
-    a = 1;
+    disp(sprintf('Red th: '));
+    mean(red_thresh)
+    disp(sprintf('Red th: '));
+    mean(blue_thresh)
 end
 
 function [pixelCandidates] = CandidateGenerationPixel_Color(im, thresh, color)

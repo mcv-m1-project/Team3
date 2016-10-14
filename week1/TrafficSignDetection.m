@@ -73,6 +73,10 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % Accumulate pixel performance of the current image %%%%%%%%%%%%%%%%%
         pixelAnnotation = imread(strcat(directory, '/mask/mask.', files(i).name(1:size(files(i).name,2)-3), 'png'))>0;
+%         imshow(im);
+%         k = waitforbuttonpress;
+%         imshow(pixelCandidates);
+%         k = waitforbuttonpress;
         [localPixelTP, localPixelFP, localPixelFN, localPixelTN] = PerformanceAccumulationPixel(pixelCandidates, pixelAnnotation);
         pixelTP = pixelTP + localPixelTP;
         pixelFP = pixelFP + localPixelFP;
@@ -127,10 +131,10 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
         case 'normrgb'
             %pixelCandidates = im(:,:,1)>100;
             
-            r_th = [11.8967, 56.8533, 52.7663];
+            r_th = [12.3786   58.1643   54.4500];
             red_pixelCandidates = im(:,:,1) > r_th(1) & im(:,:,2) < r_th(2) & im(:,:,3) < r_th(3);
             
-            b_th = [44.1466, 60.4712, 24.5236];
+            b_th = [44.0621   60.0373   24.4286];
             blue_pixelCandidates = im(:,:,1) < b_th(1) & im(:,:,2) < b_th(2) & im(:,:,3) > b_th(3);
             
             pixelCandidates = red_pixelCandidates | blue_pixelCandidates;

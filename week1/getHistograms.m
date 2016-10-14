@@ -36,10 +36,10 @@ function [ yHist, xHist] = getBackgroundHist(colorSpace, destPath, groups, numCh
                img = applycform(img, colorTransform);
            elseif strcmp(colorSpace, 'hsv')
                img = rgb2hsv(img);
-               cImg = cImg .* 255;
+               img = img .* 255;
            elseif strcmp(colorSpace, 'xyz')
                img = rgb2xyz(img);
-               cImg = cImg .* 255;
+               img = img .* 255;
            end
            
            yHist = addImgToHist(yHist, img, numChannels, samplingRate);
