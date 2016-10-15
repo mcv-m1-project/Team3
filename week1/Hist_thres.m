@@ -1,14 +1,15 @@
-function [ output_args ] = Hist_thres(samplingRate,directory)
+function [ output_args ] = Hist_thres(samplingRate,directory, signalsHistPath)
 %HIST_THRES Summary of this function goes here
 %   Detailed explanation goes here
+addpath('evaluation/');
 groups={'A','B','C','D','E','F'};
 pixelTP=0; pixelFN=0; pixelFP=0; pixelTN=0;
 results=[];
-allfiles=dir('../Histos/_signal');
+allfiles=dir(signalsHistPath);
 for i=3:size(allfiles,1)
-    allfiles2=dir(strcat('../Histos/_signal/',allfiles(i).name));
+    allfiles2=dir(strcat(signalsHistPath,allfiles(i).name));
     for j=4:2:size(allfiles2,1)
-        load(strcat('../Histos/_signal/',allfiles(i).name,'/',allfiles2(j).name));
+        load(strcat(signalsHistPath,allfiles(i).name,'/',allfiles2(j).name));
         for smoothV=1:10
             [locs_smooth]=peaks_extractor(yHist,smoothV);
             for margin=0:2:10
@@ -33,11 +34,13 @@ for i=3:size(allfiles,1)
                 end
                 tiempo=toc;
                 tiempo=tiempo/(size(val_folder,1)-2);
-                [color_spaces(1),margin, smoothV,pixelPrecision,pixelAccuracy,pixelSpecificity,pixelSensitivity,pixelF1,pixelTP,pixelFP,pixelFN,tiempo]
-                results=[results;color_spaces(1),margin, smoothV,pixelPrecision,pixelAccuracy,pixelSpecificity,pixelSensitivity,pixelF1,pixelTP,pixelFP,pixelFN,tiempo];
+                [color_spaces(1),margin, smoothV,pixelPrecision,pixelAccuracy,pixelSpecificity,pixelSensitivity,pixelF1,pixelTP,pixelFP,pixelFN,pixelTN,tiempo]
+                results=[results;color_spaces(1),margin, smoothV,pixelPrecision,pixelAccuracy,pixelSpecificity,pixelSensitivity,pixelF1,pixelTP,pixelFP,pixelFN,pixelTN,tiempo];
             end
         end
     end
 end
+
+save('results.mat', results);
 end
 
