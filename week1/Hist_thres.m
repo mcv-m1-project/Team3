@@ -10,9 +10,9 @@ for i=3:size(allfiles,1)
     allfiles2=dir(strcat(signalsHistPath,allfiles(i).name));
     for j=4:2:size(allfiles2,1)
         load(strcat(signalsHistPath,allfiles(i).name,'/',allfiles2(j).name));
-        for smoothV=1:10
+        for smoothV=1:5:20
             [locs_smooth]=peaks_extractor(yHist,smoothV);
-            for margin=0:2:10
+            for margin=0:5:20
                 pixelTP=0; pixelFN=0; pixelFP=0; pixelTN=0;
                 th  = getThresholdFromPeaks( locs_smooth, margin ) ;
                 val_folder=dir('../SplitDataset/val/');
@@ -20,6 +20,19 @@ for i=3:size(allfiles,1)
                 for z=3:size(val_folder,1)-2
                     color_spaces=strsplit(allfiles2(j).name,'_');
                     img=imread(strcat('../SplitDataset/val/',val_folder(z).name));
+                    if strcmp(colorSpace, 'ycbcr')
+                        img = rgb2ycbcr(img);
+                    elseif strcmp(colorSpace, 'cielab')
+                        colorTransform = makecform('srgb2lab');
+                        img = applycform(img, colorTransform);
+                    elseif strcmp(colorSpace, 'hsv')
+                        img = rgb2hsv(img);
+                        img = img .* 255;
+                    elseif strcmp(colorSpace, 'xyz')
+                        img = rgb2xyz(img);
+                        img = img .* 255;
+                    end
+           
                     img2 = uint16(zeros(size(img,1),size(img,2),1));
                     img2(:,:) = img(:,:,1)/samplingRate*(256/samplingRate)^2+img(:,:,2)/samplingRate*(256/samplingRate)+img(:,:,3)/samplingRate;
                     bw  = applyThreshold( th, img2 );
@@ -41,6 +54,6 @@ for i=3:size(allfiles,1)
     end
 end
 
-save('results.mat', results);
+save('results.mat', 'results');
 end
 
