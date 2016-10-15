@@ -20,15 +20,15 @@ for i=3:size(allfiles,1)
                 for z=3:size(val_folder,1)-2
                     color_spaces=strsplit(allfiles2(j).name,'_');
                     img=imread(strcat('../SplitDataset/val/',val_folder(z).name));
-                    if strcmp(colorSpace, 'ycbcr')
+                    if strcmp(color_spaces, 'ycbcr')
                         img = rgb2ycbcr(img);
-                    elseif strcmp(colorSpace, 'cielab')
+                    elseif strcmp(color_spaces, 'cielab')
                         colorTransform = makecform('srgb2lab');
                         img = applycform(img, colorTransform);
-                    elseif strcmp(colorSpace, 'hsv')
+                    elseif strcmp(color_spaces, 'hsv')
                         img = rgb2hsv(img);
                         img = img .* 255;
-                    elseif strcmp(colorSpace, 'xyz')
+                    elseif strcmp(color_spaces, 'xyz')
                         img = rgb2xyz(img);
                         img = img .* 255;
                     end
