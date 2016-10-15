@@ -10,9 +10,9 @@ for i=3:size(allfiles,1)
     allfiles2=dir(strcat(signalsHistPath,allfiles(i).name));
     for j=4:2:size(allfiles2,1)
         load(strcat(signalsHistPath,allfiles(i).name,'/',allfiles2(j).name));
-        for smoothV=1:5:20
+        for smoothV=1:4:22
             [locs_smooth]=peaks_extractor(yHist,smoothV);
-            for margin=0:5:20
+            for margin=0:4:20
                 pixelTP=0; pixelFN=0; pixelFP=0; pixelTN=0;
                 th  = getThresholdFromPeaks( locs_smooth, margin ) ;
                 val_folder=dir('../SplitDataset/val/');
