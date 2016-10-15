@@ -85,6 +85,11 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
         case 'normrgb'
             pixelCandidates = im(:,:,1)>100;
             
+        case 'hsv'
+            %TODO: hsv test code 
+            
+        case 'lab'
+            %TODO: lab test code 
 
         case 'paper'   
             t01, t02, t03, t04, t05=0;
