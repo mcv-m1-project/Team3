@@ -46,6 +46,8 @@ function TrafficSignDetection_validation(input_dir, output_dir, pixel_method, wi
 
     files = ListFiles(input_dir);
     
+    mkdir(strcat(output_dir, '/test/'));
+    
     for ii=1:size(files,1),
 
         ii
@@ -82,26 +84,50 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
     im=double(im);
 
     switch space
-        case 'normrgb'
-            pixelCandidates = im(:,:,1) > 100;
+        case 'rgb'
+            r_th = [11.8967, 56.8533, 52.7663];
+            red_pixelCandidates = im(:,:,1) > r_th(1) & im(:,:,2) < r_th(2) & im(:,:,3) < r_th(3);
             
+            b_th = [44.1466, 60.4712, 24.5236];
+            blue_pixelCandidates = im(:,:,1) < b_th(1) & im(:,:,2) < b_th(2) & im(:,:,3) > b_th(3);
+            
+            pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
+            
+        case 'normrgb'
+            % normalize rgb
+            im = NormRGB(double(im));
+            
+            r_th = [0.0830    0.2943    0.2870];
+            red_pixelCandidates = im(:,:,1) > r_th(1) & im(:,:,2) < r_th(2) & im(:,:,3) < r_th(3);
+            
+            b_th = [0.2625    0.3121    0.1951];
+            blue_pixelCandidates = im(:,:,1) < b_th(1) & im(:,:,2) < b_th(2) & im(:,:,3) > b_th(3);
+            
+            pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
+        
         case 'hsv'
-            %TODO: hsv test code 
+            imhsv = rgb2hsv(im);
+            im_h = imhsv(:,:,1);
+            im_s = imhsv(:,:,2);
+            
+            r_th = [0.9    0.1     0.5];
+            red_pixelCandidates = im_h > r_th(1) | im_h < r_th(2) & im_s > r_th(3);
+            
+            b_th = [0.5    0.7     0.5];
+            blue_pixelCandidates = im_h > b_th(1) & im_h < b_th(2) & im_s > b_th(3);
+            
+            pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
             
         case 'lab'
-            %TODO: lab test code 
-
-        case 'paper'   
-            t01, t02, t03, t04, t05=0;
-            imrgb=im;
-            im=rgb2hsv(im);
-            pixelCandidates = im (:,:,1)>0.5 && im (:,:,2)> t01; %red
-            pixelCandidates = pixelCandidates + (im(:,:,1)>0.6667 && im(:,:,1)>0.5 && im(:,:,2)>t02); %blue
-            whiteR = imrgb(:,:,1)> t03;
-            whiteG = imrgb(:,:,2)> t04;
-            whiteB = imrgb(:,:,3)> t05;
-            W = Max(whiteR,whiteG,whiteB);
-            pixelCandidates = pixelCandidates + W;
+            imlab = rgb2lab(im);
+                        
+            im_a = imlab(:,:,2);
+            im_b = imlab(:,:,3);
+            
+            red_pixelCandidates = im_a > 0;
+            blue_pixelCandidates = im_b < 0;
+            
+            pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
             
         otherwise
             error('Incorrect color space defined');
