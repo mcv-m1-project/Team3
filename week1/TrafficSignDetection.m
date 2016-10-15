@@ -173,7 +173,7 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
             pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
         
         case 'histEq'
-            imEq = histogramEqualization(im)
+            im = histogramEqualization(im);
             
             r_th = [0.1757    0.7075    0.6895];
             red_pixelCandidates = im(:,:,1) > r_th(1) & im(:,:,2) < r_th(2) & im(:,:,3) < r_th(3);
