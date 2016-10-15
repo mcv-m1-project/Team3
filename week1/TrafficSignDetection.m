@@ -127,6 +127,15 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
     im=double(im);
 
     switch space
+        case 'rgb'
+            r_th = [11.8967, 56.8533, 52.7663];
+            red_pixelCandidates = im(:,:,1) > r_th(1) & im(:,:,2) < r_th(2) & im(:,:,3) < r_th(3);
+            
+            b_th = [44.1466, 60.4712, 24.5236];
+            blue_pixelCandidates = im(:,:,1) < b_th(1) & im(:,:,2) < b_th(2) & im(:,:,3) > b_th(3);
+            
+            pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
+            
         case 'normrgb'
             % normalize rgb
             im = NormRGB(double(im));
