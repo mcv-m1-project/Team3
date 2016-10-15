@@ -1,11 +1,11 @@
-function findTh_mask_normRGB( train_set )
+function findTh_mask_normRGB( train_set, flag )
     % findTh_mask_normRGB
     % Function to find the best threshold in normRGB color space
-    %
-    %
     %    Parameter name      Value
     %    --------------      -----
-    %
+    %       train_set          folder where the training data is stored
+    %         flag              accepted values: ‘normRGB’, ‘RGB, ‘histEq’
+    %                           type of preprocessing
     % The function finds the best threshold for each image.
     
     % List images
@@ -25,8 +25,18 @@ function findTh_mask_normRGB( train_set )
         % Read file
         im = double(imread(strcat(train_set,'/',files(i).name)));
         
-        % normalize RGB
-        im = NormRGB(im);
+        % Preprocessing type
+        switch flag
+            case 'normRGB'
+                im = NormRGB(im);
+            case 'RGB'
+                im = im;
+            case 'histEq'
+                im = histogramEqualization(im);
+            otherwise
+                error('Incorrect color space defined');
+                return
+        end
         im_r = im(:,:,1);
         im_g = im(:,:,2);
         im_b = im(:,:,3);
@@ -57,9 +67,7 @@ function findTh_mask_normRGB( train_set )
             if sum(mask_signal(:)) == 0 
                 continue;
             end 
-            
-            %mask_signal(mask_signal) = xor(mask_signal(mask_signal), (im_r(mask_signal) > 0.27 & im_g(mask_signal) > 0.27 & im_b(mask_signal) > 0.27));
-            
+                        
 %           imshow(mask_signal)
 %           k = waitforbuttonpress;
             
@@ -138,7 +146,7 @@ function findTh_mask_normRGB( train_set )
     end
     disp(sprintf('Red th: '));
     mean(red_thresh)
-    disp(sprintf('Red th: '));
+    disp(sprintf('Blue th: '));
     mean(blue_thresh)
 end
 
