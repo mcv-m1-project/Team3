@@ -12,6 +12,8 @@ function [output_args] = findTh_mask_hsv(train_set)
     nFiles = size(files, 1);
     disp(sprintf('Training with %d Files', nFiles));
     
+    HSVTrain = fopen('hsv_train.txt','w');
+    
     red_radiuses = [0.05 0.1 0.20 0.30];
     blue_radiuses = [0.05 0.1 0.20 0.30];
     sat_radiuses = [0.3 0.5 0.7];
@@ -19,10 +21,17 @@ function [output_args] = findTh_mask_hsv(train_set)
         for bi=1:length(blue_radiuses)
             for si=1:length(sat_radiuses)
                 
+                disp(sprintf('Training with %f %f %f', red_radiuses(ri), blue_radiuses(bi), sat_radiuses(si)));
+                fprintf(HSVTrain, 'Training with %f %f %f \n', red_radiuses(ri), blue_radiuses(bi), sat_radiuses(si));
+                
                 pixelTP=0; pixelFN=0; pixelFP=0; pixelTN=0;
                 
                 %---------- START DATASET -------------
                 for i=1:nFiles
+                    
+                    if (mod(i, 25) == 0)
+                        i
+                    end
 
                     % Read the image
                     im = imread(strcat(train_set,'/',files(i).name));
@@ -58,10 +67,14 @@ function [output_args] = findTh_mask_hsv(train_set)
                 disp(sprintf('TP: %f', pixelTP));
                 disp(sprintf('FP: %f', pixelFP));
                 disp(sprintf('FN: %f', pixelFN));
+                
+                fprintf(HSVTrain, 'Precision: %f, Accuracy: %f, Specificity: %f, Sensitivity (Recall): %f, F1 score: %f, TP: %f, FP: %f, FN: %f \n', pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity, pixelF1, pixelTP, pixelFP, pixelFN);
     
             end
         end
     end
+    
+    fclose(HSVTrain);
 end
 
 function [pixelCandidates] = CandidateGenerationPixel_Color(im, r_th, b_th)
