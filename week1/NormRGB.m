@@ -1,6 +1,7 @@
 function [ norm ] = NormRGB( im )
 %NORMRGB Normalizes an RGB image
-%   im must be double
+%params:    im: image, must be double
+%return:    rgb normalized image
 
     % normalize rgb (add small constant to avoid division by zero)
     norm_r = im(:,:,1)./(im(:,:,1)+im(:,:,2)+im(:,:,3)+0.0001);
