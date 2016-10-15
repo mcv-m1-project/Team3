@@ -1,4 +1,4 @@
-function findTh_mask_normRGB()
+function findTh_mask_normRGB( train_set )
     % findTh_mask_normRGB
     % Function to find the best threshold in normRGB color space
     %
@@ -8,9 +8,7 @@ function findTh_mask_normRGB()
     %
     % The function finds the best threshold for each image.
     
-    % For each image in the train set
-    train_set = '../SplitDataset/train';
-    
+    % List images
     files = ListFiles(train_set);
     nFiles = size(files, 1);
     disp(sprintf('Training with %d Files', nFiles));

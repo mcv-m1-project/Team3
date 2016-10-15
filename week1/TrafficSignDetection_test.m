@@ -83,7 +83,7 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
 
     switch space
         case 'normrgb'
-            pixelCandidates = im(:,:,1)>100;
+            pixelCandidates = im(:,:,1) > 100;
             
         case 'hsv'
             %TODO: hsv test code 
