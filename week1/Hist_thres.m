@@ -1,6 +1,4 @@
 function [ output_args ] = Hist_thres(samplingRate,directory, signalsHistPath)
-%HIST_THRES Summary of this function goes here
-%   Detailed explanation goes here
 addpath('evaluation/');
 groups={'A','B','C','D','E','F'};
 pixelTP=0; pixelFN=0; pixelFP=0; pixelTN=0;

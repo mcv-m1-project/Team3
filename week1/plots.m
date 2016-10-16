@@ -1,11 +1,9 @@
 function  plots( results_histograms_path)
-%UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
 load(results_histograms_path);
 color=['r','g','b','m','c'];
 col=0;
 fig=0;
-for i=1:(36*5):size(results,1) %%todos los tipos de señal
+for i=1:(36*5):size(results,1) %%all signal classes
     col=0;
     fig=fig+2;
     precision = [];
@@ -14,7 +12,7 @@ for i=1:(36*5):size(results,1) %%todos los tipos de señal
     fall_out=[];
     for k=0:36:(35*5)%
         col=col+1;
-        for j=0:35 %todos los de un mismo espacio de color
+        for j=0:35 %same color space
             
             
             precision = [precision, cell2mat(results(i+j+k,4))];
@@ -52,8 +50,5 @@ for i=1:(36*5):size(results,1) %%todos los tipos de señal
         legend('cielab','hsv','rgb','xyz','ycbcr');
     end
 end
-
-
-
 
 end

@@ -58,8 +58,6 @@ function [ yHist, xHist] = getBackgroundHist(colorSpace, destPath, groups, numCh
 end
 
 function [ output_args ] = getSignalHist( colorSpace, destPath, groups, numChannels, samplingRate)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
     colorSpace = lower(colorSpace);
     
     mkdir(destPath);

@@ -1,7 +1,4 @@
 function [ imgPaths, maskPaths ] = getTrainPaths( path )
-%UNTITLED4 Summary of this function goes here
-%   Detailed explanation goes here
-
     files = dir(path);
     imgPaths = [];
     maskPaths = [];
