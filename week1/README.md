@@ -13,7 +13,7 @@ Parameters:
 
 **pathMask:** Folder where the dataset masks are stored.
 
-### Task 2 - Dataset Split
+## Task 2 - Dataset Split
 This will split the dataset in two sets, train and validation, and store each set in a different folder. The train and validation sets have a 70% and 30% of samples respectively. The labels are evenly distributed.
 How to run it:
 ```
