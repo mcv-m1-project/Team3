@@ -54,7 +54,7 @@ findTh_mask_hsv(path_to_train)
 ```
 Parameters:
 
-**path_to_train: ** path to the training images
+**path_to_train:** path to the training images
 
 ### **findTh_lab**
 This method will try different threshold combinations in the CIELAB color space and store the performance results of each combination in a txt file ‘lab_train.txt’.
