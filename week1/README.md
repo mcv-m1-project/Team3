@@ -8,7 +8,9 @@ How to run it:
 task1 (pathGt, pathMask)
 ```
 Parameters:
+
 **pathGt:** Folder where the dataset ground truth are stored.
+
 **pathMask:** Folder where the dataset masks are stored.
 
 ### Task 2 - Dataset Split
@@ -18,9 +20,13 @@ How to run it:
 task2(pathGt, pathImg, pathMask, pathSplit)
 ```
 Parameters:
+
 **pathGt:** Folder where the dataset ground truth are stored.
+
 **pathImg:** Folder where the dataset images are stored.
+
 **pathMask:** Folder where the dataset masks are stored.
+
 **pathSplit:** Folder where the two sets will be created.
 
 ### Task 3 - How to obtain the best threshold
@@ -32,9 +38,11 @@ How to run it:
 ```
 findTh_mask_normRGB(path_to_train, flag) 
 ```
- Parameters
-	**path_to_train:** path to the training images
-	**flag** (accepted values: ‘normRGB’, ‘RGB, ‘histEq’): type of preprocessing
+ Parameters:
+ 
+**path_to_train:** path to the training images
+
+**flag** (accepted values: ‘normRGB’, ‘RGB, ‘histEq’): type of preprocessing
 
     
 
@@ -45,6 +53,7 @@ How to run it:
 findTh_mask_hsv(path_to_train) 
 ```
 Parameters:
+
 **path_to_train: ** path to the training images
 
 #### **findTh_lab**
@@ -53,7 +62,8 @@ How to run it:
 ```
 findTh_lab(path_to_train) 
 ```
-Parameters
+Parameters:
+
 **path_to_train:** path to the training images
 
 #### **getHistograms**
@@ -62,10 +72,14 @@ How to run it:
 ```
 getHistograms( destPath, groups, numChannels, samplingRate)
 ```
-Parameters
+Parameters:
+
 **destPath:** path where the histograms will be saved
+
 **gorups:** .mat file generated in task2 containing training data
+
 **numChannels:** allows to join 3 channels to 1
+
 **samplingRate:** allows to downsample the channels 
 
 
@@ -75,9 +89,12 @@ How to run it:
 ```
 Hist_thres( samplingRate, directory, signalsHistPath )
 ```
-Parameters
+Parameters:
+
 **samplingRate:** allows to downsample the channels
+
 **directory:** validation split directory
+
 **signalsHistPath:** directory containing data from getHistograms
 
 #### **final_thresh**
@@ -87,8 +104,11 @@ How to run it: set the threshold data and execute the command:
 final_thresh( samplingRate,directory, signalsHistPath)
 ```
 Parameters:
+
 **samplingRate:** allows to downsample the channels
+
 **directory:** validation split directory
+
 **signalsHistPath:** directory containing data from getHistogram.
 
 #### **plots**
@@ -98,6 +118,7 @@ How to run it:
 plots(results_histograms_path)
 ```
 Parameters:
+
 **results_histograms_path:** path of generated data by Hist_thres function.
 
 
@@ -108,7 +129,9 @@ To evaluate the segmentation one must run the function:
 TrafficSignDetection(directory, pixel_method)
 ```
 Parameters:
+
 **directory:** Folder where the validation set is stored.
+
 **pixel_method:** Color space used. (‘rgb’, ‘normrgb’, ‘hsv’, ‘lab’)
 
 #### **How to run the Test**
@@ -117,8 +140,11 @@ To generate the pixel Segmentation for each test image one must run the function
 TrafficSignDetection_test(input_dir, output_dir,pixel_method)
 ```
 Parameters:
+
 **input_dir:** folder where the test images are stored.
+
 **output_dir:** folder where the segmentated test images will be stored.
+
 **pixel_method:** Color space used for segmentation. (‘rgb’, ‘normrgb’, ‘hsv’, ‘lab’)
 
 
@@ -129,8 +155,9 @@ How to run it:
 ```
 findTh_mask_normRGB(path_to_train, flag) 
 ```
- Parameters
+Parameters:
 **path_to_train:** path to the training images
+
 **flag:** it MUST be set to 'histEq'
 
 The histogram equalization algorithm by itself can also be run typing:
@@ -138,6 +165,7 @@ The histogram equalization algorithm by itself can also be run typing:
 histogramEqualization(im)
 ```
 Parameters:
+
 **im:** image to be processed
 
 
