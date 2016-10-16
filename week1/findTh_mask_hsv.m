@@ -14,9 +14,9 @@ function [output_args] = findTh_mask_hsv(train_set)
     
     HSVTrain = fopen('hsv_train.txt','w');
     
-    red_radiuses = [0.05 0.1 0.20 0.30];
-    blue_radiuses = [0.05 0.1 0.20 0.30];
-    sat_radiuses = [0.3 0.5 0.7];
+    red_radiuses = [0.04 0.05 0.06];
+    blue_radiuses = [0.08 0.1 0.12];
+    sat_radiuses = [0.45 0.5 0.55];
     for ri=1:length(red_radiuses)
         for bi=1:length(blue_radiuses)
             for si=1:length(sat_radiuses)
@@ -82,7 +82,7 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, r_th, b_th)
     im_h = im(:,:,1);
     im_s = im(:,:,2);
     
-    red_pixelCandidates = im_h > r_th(1) | im_h < r_th(2) & im_s > r_th(3);
+    red_pixelCandidates = (im_h > r_th(1) | im_h < r_th(2)) & im_s > r_th(3);
     blue_pixelCandidates = im_h > b_th(1) & im_h < b_th(2) & im_s > b_th(3);
 
     pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
