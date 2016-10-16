@@ -1,5 +1,5 @@
-# Team3
+# Team3 - IHCV
 
-Download the dataset an place it in the root of the repository with the following structure:
-DataSetDelivered/train
-DatasetDelivered/test
+For each week there is a *Readme.md* file placed inside the weekX folder where we explain work done every week and how to run the code.
+
+Team members: Pau Cebrián, Arnau Baró, Guillem Cucurull and Victor Campmany
