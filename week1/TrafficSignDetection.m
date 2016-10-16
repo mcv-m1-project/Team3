@@ -1,7 +1,7 @@
 %
 % Template example for using on the validation set.
 % 
- 
+
 function TrafficSignDetection(directory, pixel_method, window_method, decision_method)
     % TrafficSignDetection
     % Perform detection of Traffic signs on images. Detection is performed first at the pixel level
@@ -16,6 +16,8 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     %    'window_method'     'SegmentationCCL' or 'SlidingWindow' (Weeks 3-5)
     %    'decision_method'   'GeometricHeuristics' or 'TemplateMatching' (Weeks 4-5)
 
+    % Guillem - to use evaluation functions
+    addpath('evaluation')
 
     global CANONICAL_W;        CANONICAL_W = 64;
     global CANONICAL_H;        CANONICAL_H = 64;
@@ -48,22 +50,32 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     
     files = ListFiles(directory);
     
-    for i=1:size(files,1),
-
-        i
+    nFiles = size(files, 1);
+    disp(sprintf('%d images to evaluate', nFiles));
+    
+    tic
+    
+    for i=1:nFiles
+        
+        if (mod(i, 25) == 0)
+            i
+        end
         
         % Read file
         im = imread(strcat(directory,'/',files(i).name));
-     
+             
         % Candidate Generation (pixel) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         pixelCandidates = CandidateGenerationPixel_Color(im, pixel_method);
-        
-        
+                
         % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % windowCandidates = CandidateGenerationWindow_Example(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
         
         % Accumulate pixel performance of the current image %%%%%%%%%%%%%%%%%
         pixelAnnotation = imread(strcat(directory, '/mask/mask.', files(i).name(1:size(files(i).name,2)-3), 'png'))>0;
+%         imshow(im);
+%         k = waitforbuttonpress;
+%         imshow(pixelCandidates);
+%         k = waitforbuttonpress;
         [localPixelTP, localPixelFP, localPixelFN, localPixelTN] = PerformanceAccumulationPixel(pixelCandidates, pixelAnnotation);
         pixelTP = pixelTP + localPixelTP;
         pixelFP = pixelFP + localPixelFP;
@@ -79,15 +91,26 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     end
 
     % Plot performance evaluation
-    [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity] = PerformanceEvaluationPixel(pixelTP, pixelFP, pixelFN, pixelTN);
+    [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity, pixelF1] = PerformanceEvaluationPixel(pixelTP, pixelFP, pixelFN, pixelTN);
     % [windowPrecision, windowAccuracy] = PerformanceEvaluationWindow(windowTP, windowFN, windowFP); % (Needed after Week 3)
     
-    [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity]
+    [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity, pixelF1]
+    
+    disp(sprintf('Precision: %f', pixelPrecision));
+    disp(sprintf('Accuracy: %f', pixelAccuracy));
+    disp(sprintf('Specificity: %f', pixelSpecificity));
+    disp(sprintf('Sensitivity (Recall): %f', pixelSensitivity));
+    disp(sprintf('F1 score: %f', pixelF1));
+    disp(sprintf('TP: %f', pixelTP));
+    disp(sprintf('FP: %f', pixelFP));
+    disp(sprintf('FN: %f', pixelFN));
+    
     % [windowPrecision, windowAccuracy]
     
     %profile report
     %profile off
-    toc
+    elapsed = toc;    
+    disp(sprintf('Time per frame: %f s.', elapsed/nFiles));
 end
  
 
@@ -104,8 +127,66 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
     im=double(im);
 
     switch space
+        case 'rgb'
+            r_th = [11.8967, 56.8533, 52.7663];
+            red_pixelCandidates = im(:,:,1) > r_th(1) & im(:,:,2) < r_th(2) & im(:,:,3) < r_th(3);
+            
+            b_th = [44.1466, 60.4712, 24.5236];
+            blue_pixelCandidates = im(:,:,1) < b_th(1) & im(:,:,2) < b_th(2) & im(:,:,3) > b_th(3);
+            
+            pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
+            
         case 'normrgb'
-            pixelCandidates = im(:,:,1)>100;
+            % normalize rgb
+            im = NormRGB(double(im));
+            
+            r_th = [0.0830    0.2943    0.2870];
+            red_pixelCandidates = im(:,:,1) > r_th(1) & im(:,:,2) < r_th(2) & im(:,:,3) < r_th(3);
+            
+            b_th = [0.2625    0.3121    0.1951];
+            blue_pixelCandidates = im(:,:,1) < b_th(1) & im(:,:,2) < b_th(2) & im(:,:,3) > b_th(3);
+            
+            pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
+        
+        case 'hsv'
+            imhsv = rgb2hsv(im);
+            im_h = imhsv(:,:,1);
+            im_s = imhsv(:,:,2);
+            im_v = imhsv(:,:,3);
+            
+            v_th = [0.1*255 1*255];
+            
+            r_th = [0.96    0.04     0.5];
+            red_pixelCandidates = (im_h > r_th(1) | im_h < r_th(2)) & im_s > r_th(3);
+            
+            b_th = [0.56    0.76     0.5];
+            blue_pixelCandidates = im_h > b_th(1) & im_h < b_th(2) & im_s > b_th(3);
+            
+            pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
+            
+            pixelCandidates = pixelCandidates & im_v > v_th(1) & im_v < v_th(2);
+            
+        case 'lab'
+            imlab = rgb2lab(im);
+                        
+            im_a = imlab(:,:,2);
+            im_b = imlab(:,:,3);
+            
+            red_pixelCandidates = im_a > 0;
+            blue_pixelCandidates = im_b < 0;
+            
+            pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
+        
+        case 'histEq'
+            im = histogramEqualization(im);
+            
+            r_th = [0.1757    0.7075    0.6895];
+            red_pixelCandidates = im(:,:,1) > r_th(1) & im(:,:,2) < r_th(2) & im(:,:,3) < r_th(3);
+            
+            b_th = [0.5784    0.6954    0.4534];
+            blue_pixelCandidates = im(:,:,1) < b_th(1) & im(:,:,2) < b_th(2) & im(:,:,3) > b_th(3);
+            
+            pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
             
         otherwise
             error('Incorrect color space defined');
