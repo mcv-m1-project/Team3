@@ -153,10 +153,10 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
             im_h = imhsv(:,:,1);
             im_s = imhsv(:,:,2);
             
-            r_th = [0.9    0.1     0.5];
+            r_th = [0.95    0.05     0.5];
             red_pixelCandidates = im_h > r_th(1) | im_h < r_th(2) & im_s > r_th(3);
             
-            b_th = [0.5    0.7     0.5];
+            b_th = [0.56    0.76     0.5];
             blue_pixelCandidates = im_h > b_th(1) & im_h < b_th(2) & im_s > b_th(3);
             
             pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
