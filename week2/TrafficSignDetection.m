@@ -67,14 +67,15 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         % Candidate Generation (pixel) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         pixelCandidates = CandidateGenerationPixel_Color(im, pixel_method);
         
-        pixelCandidates2 = task3(pixelCandidates);
+        pixelCandidates_old=pixelCandidates;
+        pixelCandidates = task3(pixelCandidates);
        
         
         subplot(1,2,1);
-        imshow(pixelCandidates);
+        imshow(pixelCandidates_old);
         title('Original')
         subplot(1,2,2);
-        imshow(pixelCandidates2);
+        imshow(pixelCandidates);
         title('Modified')
         % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % windowCandidates = CandidateGenerationWindow_Example(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
