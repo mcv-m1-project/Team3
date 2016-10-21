@@ -2,7 +2,7 @@
 % Template example for using on the validation set.
 % 
 
-function TrafficSignDetection(directory, pixel_method, window_method, decision_method)
+function TrafficSignDetection(directory, pixel_method, window_method, decision_method, element)
     % TrafficSignDetection
     % Perform detection of Traffic signs on images. Detection is performed first at the pixel level
     % using a color segmentation. Then, using the color segmentation as a basis, the most likely window 
@@ -68,15 +68,18 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         pixelCandidates = CandidateGenerationPixel_Color(im, pixel_method);
         
         pixelCandidates_old=pixelCandidates;
-        pixelCandidates = task3(pixelCandidates);
-       
+        pixelCandidates = task3(pixelCandidates, pixel_method, element);
         
-        subplot(1,2,1);
-        imshow(pixelCandidates_old);
-        title('Original')
-        subplot(1,2,2);
-        imshow(pixelCandidates);
-        title('Modified')
+        
+       
+%         pause(.0001);
+%         subplot(1,2,1);
+%         imshow(pixelCandidates_old);
+%         title('Original')
+%         subplot(1,2,2);
+%         imshow(pixelCandidates);
+%         title('Modified')
+        
         % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         % windowCandidates = CandidateGenerationWindow_Example(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
         
