@@ -197,6 +197,35 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
             blue_pixelCandidates = im(:,:,1) < b_th(1) & im(:,:,2) < b_th(2) & im(:,:,3) > b_th(3);
             
             pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
+        
+        case 'hbp'
+            imhsv = rgb2hsv(im);
+            im_h = imhsv(:,:,1);
+            im_s = imhsv(:,:,2);
+            
+            bins = 32;
+            
+            load(['red_hist_' num2str(bins) '.mat']);
+            load(['blue_hist_' num2str(bins) '.mat']);
+            load(['rb_hist_' num2str(bins) '.mat']);
+            
+            red_hist(:,1:round(bins*0.5)) = 0;
+            blue_hist(:,1:round(bins*0.5)) = 0;
+            rb_hist(:,1:round(bins*0.5)) = 0;
+  
+            pixels = [im_h(:) im_s(:)];
+            pixels = ceil(pixels*bins); % from pixels to bins
+            pixels(pixels==0) = 1;
+
+            pixelCandidates = zeros(size(im_h));
+            pixelCandidates = reshape(pixelCandidates, [size(pixelCandidates, 1)*size(pixelCandidates, 2), 1]);
+
+            for p=1:size(pixelCandidates, 1)
+                hist_i = pixels(p,1);
+                hist_j = pixels(p,2);
+                pixelCandidates(p) = (red_hist(hist_i, hist_j) > 0.005) | (blue_hist(hist_i, hist_j) > 0.005) | (rb_hist(hist_i, hist_j) > 0.005);
+            end
+            pixelCandidates = reshape(pixelCandidates, size(im_h));
             
         otherwise
             error('Incorrect color space defined');
