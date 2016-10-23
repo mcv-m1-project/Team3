@@ -50,7 +50,7 @@ This function improves the previous color-space components based segmentation. R
 The comments include functions whose goal is to complete broken edges of the signals. These functions increases false positive detections and reduces F1-score for now, although, the recall increases considerably. We think that this can be useful on the next weeks.
 How to run it:
 ```
-task3( pixelCandidates, mode, element)
+task3( pixelCandidates, element)
 ```
 Parameters:
 
