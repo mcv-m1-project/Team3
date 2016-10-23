@@ -48,21 +48,21 @@ function eval_task4( val_path, bins)
         pixels(pixels==0) = 1;
         
         % Normalize the signals histograms according to this specific image
-%         im_hist = buildHist(im_h(:), im_s(:), bins);
-%         im_hist = im_hist / sum(im_hist(:));
-%         norm_red_hist = red_hist ./ im_hist; norm_red_hist(isinf(norm_red_hist)) = 0; norm_red_hist(isnan(norm_red_hist)) = 0;
-%         norm_blue_hist = blue_hist ./ im_hist; norm_blue_hist(isinf(norm_blue_hist)) = 0; norm_blue_hist(isnan(norm_blue_hist)) = 0;
-%         norm_rb_hist = rb_hist ./ im_hist; norm_rb_hist(isinf(norm_rb_hist)) = 0; norm_rb_hist(isnan(norm_rb_hist)) = 0;
-%         % Normalize each histogram in the 0-1 range
-%         norm_red_hist = norm_red_hist / max(norm_red_hist(:));
-%         norm_blue_hist = norm_blue_hist / max(norm_blue_hist(:));
-%         norm_rb_hist = norm_rb_hist / max(norm_rb_hist(:));
+        im_hist = buildHist(im_h(:), im_s(:), bins);
+        im_hist = im_hist / sum(im_hist(:));
+        norm_red_hist = red_hist ./ im_hist; norm_red_hist(isinf(norm_red_hist)) = 0; norm_red_hist(isnan(norm_red_hist)) = 0;
+        norm_blue_hist = blue_hist ./ im_hist; norm_blue_hist(isinf(norm_blue_hist)) = 0; norm_blue_hist(isnan(norm_blue_hist)) = 0;
+        norm_rb_hist = rb_hist ./ im_hist; norm_rb_hist(isinf(norm_rb_hist)) = 0; norm_rb_hist(isnan(norm_rb_hist)) = 0;
+        % Normalize each histogram in the 0-1 range
+        norm_red_hist = norm_red_hist / max(norm_red_hist(:));
+        norm_blue_hist = norm_blue_hist / max(norm_blue_hist(:));
+        norm_rb_hist = norm_rb_hist / max(norm_rb_hist(:));
         
         
         for p=1:size(segmentation, 1)
             hist_i = pixels(p,1);
             hist_j = pixels(p,2);
-            segmentation(p) = (red_hist(hist_i, hist_j) > 0.005) | (blue_hist(hist_i, hist_j) > 0.005) | (rb_hist(hist_i, hist_j) > 0.005);
+            segmentation(p) = (norm_red_hist(hist_i, hist_j) > 0.001) | (norm_blue_hist(hist_i, hist_j) > 0.001) | (norm_rb_hist(hist_i, hist_j) > 0.001);
         end
         segmentation = reshape(segmentation, size(mask));
 %         imshow(segmentation);
