@@ -32,7 +32,9 @@ check_correctness(im, se, type)
 ```
 Parameters:
 **im:** grayscale or BW image to be tested
+
 **se:** structuring element represented as a logical matrix
+
 **type:** (accepted values: 'dilate' or 'erode') string indicating the type of test
 
 ## Task 2 - Comparison of the computational efficiency

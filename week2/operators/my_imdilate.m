@@ -1,23 +1,30 @@
-function [ imeroded ] = my_imdilate( im, se )
-%UNTITLED5 Summary of this function goes here
-%   Detailed explanation goes here
+function [ imdilated ] = my_imdilate( im, se )
+% checks if the implemented morphological operators have the same results
+% as the matlab ones
+% Parameters:
+%           im: image to be dilated
+%           se: structuring element represented as a logical matrix
 
     [rows cols] = size(im);
     [se_i se_j] = size(se);
-    %center = floor((size(se)+1)/2);
+    
+    % Compute center of the SE
     cent_i = floor( (size(se, 1) / 2) + 1);
     cent_j = floor( (size(se, 2) / 2) + 1);
-    %cent_i = center(1);
-    %cent_j = center(2);
+    
+    % Temporary array
     temp = zeros( 1, sum(se(:)) );
     
-    imeroded = im(:,:);
+    % Create matrix for the dilated image
+    imdilated = im(:,:);
     
+    % For each pixel outside the boundaries
     for j = cent_j : cols-(se_j-cent_j)
         for i = cent_i : rows-(se_i-cent_i)
             jj = j - cent_j + 1;
             ii = i - cent_i + 1;
             count = 1;
+            % for each element of the SE
             for k = 1 : se_j
                 for z = 1 : se_i
                     if se(z, k) == 1
@@ -26,7 +33,8 @@ function [ imeroded ] = my_imdilate( im, se )
                     end
                 end
             end
-            imeroded(i,j) = max(temp);
+            % Get the maximum value of the SE
+            imdilated(i,j) = max(temp);
         end
     end
 end
