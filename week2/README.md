@@ -43,7 +43,20 @@ Run the script:
 ```
 time_profile
 ```
+## Task 3 - Improving results on color segmentation
 
+This function improves the previous color-space components based segmentation. Removes noise and fill gaps of the undetected elements inside the signals.
+
+The comments include functions whose goal is to complete broken edges of the signals. These functions increases false positive detections and reduces F1-score for now, although, the recall increases considerably. We think that this can be useful on the next weeks.
+How to run it:
+```
+task3( pixelCandidates, mode, element)
+```
+Parameters:
+
+**pixelCandidates:** BW image of previous color-space components based segmentation.
+
+**element:** Structural element to remove the noise
 
 
 
