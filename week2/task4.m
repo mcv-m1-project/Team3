@@ -1,14 +1,16 @@
-function  task4( train_set )
+function  task4( train_set, bins)
     % Implement Histogram Back Projection
+    % It will save the three histograms created, one for the red signals,
+    % on for the blue signals and one for the red and blue signals.
+    % The filename for each histogram will be: "color"_hist_"bins".mat
     % ARGUMENTS:
-    %   - train_set:        Path where the train set is located.  
+    %   - train_set:        Path where the train set is located.
+    %   - bins:             The number of bins of the histogramgs.
     
     files = ListFiles(train_set);
     nFiles = size(files, 1);
     disp(sprintf('Training with %d Files', nFiles));
-    
-    bins = 128;
-    
+        
     red_hist = zeros(bins);
     blue_hist = zeros(bins);
     rb_hist = zeros(bins);

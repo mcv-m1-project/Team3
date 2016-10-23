@@ -219,7 +219,7 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
   
             pixels = [im_h(:) im_s(:)];
             pixels = ceil(pixels*bins); % from pixels to bins
-            pixels(pixels==0) = 1;
+            pixels(pixels==0) = 1; % convert 0 to ones because the loswest bin is 1.
 
             pixelCandidates = zeros(size(im_h));
             pixelCandidates = reshape(pixelCandidates, [size(pixelCandidates, 1)*size(pixelCandidates, 2), 1]);

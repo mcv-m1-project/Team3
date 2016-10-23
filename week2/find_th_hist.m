@@ -89,15 +89,15 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, th, bins, red_hi
     im_s = im(:,:,2);
     
     % Normalize the signals histograms according to this specific image
-    im_hist = buildHist(im_h(:), im_s(:), bins);
-    im_hist = im_hist / sum(im_hist(:));
-    norm_red_hist = red_hist ./ im_hist; norm_red_hist(isinf(norm_red_hist)) = 0; norm_red_hist(isnan(norm_red_hist)) = 0;
-    norm_blue_hist = blue_hist ./ im_hist; norm_blue_hist(isinf(norm_blue_hist)) = 0; norm_blue_hist(isnan(norm_blue_hist)) = 0;
-    norm_rb_hist = rb_hist ./ im_hist; norm_rb_hist(isinf(norm_rb_hist)) = 0; norm_rb_hist(isnan(norm_rb_hist)) = 0;
-    % Normalize each histogram in the 0-1 range
-    norm_red_hist = norm_red_hist / max(norm_red_hist(:));
-    norm_blue_hist = norm_blue_hist / max(norm_blue_hist(:));
-    norm_rb_hist = norm_rb_hist / max(norm_rb_hist(:));
+%     im_hist = buildHist(im_h(:), im_s(:), bins);
+%     im_hist = im_hist / sum(im_hist(:));
+%     norm_red_hist = red_hist ./ im_hist; norm_red_hist(isinf(norm_red_hist)) = 0; norm_red_hist(isnan(norm_red_hist)) = 0;
+%     norm_blue_hist = blue_hist ./ im_hist; norm_blue_hist(isinf(norm_blue_hist)) = 0; norm_blue_hist(isnan(norm_blue_hist)) = 0;
+%     norm_rb_hist = rb_hist ./ im_hist; norm_rb_hist(isinf(norm_rb_hist)) = 0; norm_rb_hist(isnan(norm_rb_hist)) = 0;
+%     % Normalize each histogram in the 0-1 range
+%     norm_red_hist = norm_red_hist / max(norm_red_hist(:));
+%     norm_blue_hist = norm_blue_hist / max(norm_blue_hist(:));
+%     norm_rb_hist = norm_rb_hist / max(norm_rb_hist(:));
     
     pixels = [im_h(:) im_s(:)];
     pixels = ceil(pixels*bins); % from pixels to bins
@@ -109,7 +109,7 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, th, bins, red_hi
     for p=1:size(pixelCandidates, 1)
         hist_i = pixels(p,1);
         hist_j = pixels(p,2);
-        pixelCandidates(p) = (norm_red_hist(hist_i, hist_j) > th) | (norm_blue_hist(hist_i, hist_j) > th) | (norm_rb_hist(hist_i, hist_j) > th);
+        pixelCandidates(p) = (red_hist(hist_i, hist_j) > th) | (blue_hist(hist_i, hist_j) > th) | (rb_hist(hist_i, hist_j) > th);
     end
     pixelCandidates = reshape(pixelCandidates, size(im_h));
 
