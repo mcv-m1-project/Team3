@@ -57,6 +57,7 @@ function TrafficSignDetection_validation(input_dir, output_dir, pixel_method, wi
      
         % Candidate Generation (pixel) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         pixelCandidates = CandidateGenerationPixel_Color(im, pixel_method);
+        element=strel('octagon',21);
         pixelCandidates = task3(pixelCandidates, pixel_method, element);
         
         

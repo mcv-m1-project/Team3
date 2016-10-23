@@ -3,7 +3,7 @@
 % Template example for using on the validation set.
 % 
 
-function TrafficSignDetection(directory, pixel_method, window_method, decision_method, element)
+function TrafficSignDetection(directory, pixel_method, window_method, decision_method)
     % TrafficSignDetection
     % Perform detection of Traffic signs on images. Detection is performed first at the pixel level
     % using a color segmentation. Then, using the color segmentation as a basis, the most likely window 
@@ -17,7 +17,6 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     %    'window_method'     'SegmentationCCL' or 'SlidingWindow' (Weeks 3-5)
     %    'decision_method'   'GeometricHeuristics' or 'TemplateMatching' (Weeks 4-5)
 
-    % Guillem - to use evaluation functions
     addpath('evaluation')
 
     global CANONICAL_W;        CANONICAL_W = 64;
@@ -67,7 +66,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
              
         % Candidate Generation (pixel) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         pixelCandidates = CandidateGenerationPixel_Color(im, pixel_method);
-        
+        element=strel('octagon',21);
         pixelCandidates = task3(pixelCandidates, pixel_method, element);
         
         % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
