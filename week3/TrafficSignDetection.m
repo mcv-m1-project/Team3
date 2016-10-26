@@ -55,7 +55,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     
     tic
     
-    for i=1:nFiles
+    for i=1:2%nFiles
         
         if (mod(i, 25) == 0)
             i
@@ -66,11 +66,17 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
              
         % Candidate Generation (pixel) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         pixelCandidates = CandidateGenerationPixel_Color(im, pixel_method);
-        element=strel('octagon',21);
+        element=strel('diamond',4);
         pixelCandidates = morf(pixelCandidates, element);
         
         % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        windowCandidates = CandidateGenerationWindow_Example(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
+        windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
+        
+        imshow(pixelCandidates)
+        hold on;
+        for a=1:size(windowCandidates(1))
+            rectangle()
+        end    
         
         % Accumulate pixel performance of the current image %%%%%%%%%%%%%%%%%
         pixelAnnotation = imread(strcat(directory, '/mask/mask.', files(i).name(1:size(files(i).name,2)-3), 'png'))>0;
@@ -97,7 +103,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity, pixelF1] = PerformanceEvaluationPixel(pixelTP, pixelFP, pixelFN, pixelTN);
     [windowPrecision, windowAccuracy, windowSpecificity, windowSensitivity, windowF1] = PerformanceEvaluationWindow(windowTP, windowFN, windowFP, windowTN); % (Needed after Week 3)
     
-    [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity, pixelF1]
+    [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity, pixelF1];
     
     disp(sprintf('PIXEL INFORMATION'));
     disp(sprintf('Precision: %f', pixelPrecision));
@@ -238,11 +244,9 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
 end    
     
 
-function [windowCandidates] = CandidateGenerationWindow_Example(im, pixelCandidates, window_method)
-    windowCandidates = [ struct('x',double(12),'y',double(17),'w',double(32),'h',double(32)) ];
-    % Iterate over different image sizes - decide it
-    %for each size of the window
-        % call SlidingWindow.m ......
+function [windowCandidates] = CandidateGenerationWindow(im, pixelCandidates, window_method)
+    %windowCandidates = [ struct('x',double(12),'y',double(17),'w',double(32),'h',double(32)) ];
+    windowCandidates = SlidingWindow(pixelCandidates, 8, 32, 32, 0.01);
 end  
 
 
