@@ -45,7 +45,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     %   triangleTemplate  = load('TemplateTriangles.mat');
     %end
 
-    % windowTP=0; windowFN=0; windowFP=0; % (Needed after Week 3)
+    windowTP=0; windowFN=0; windowFP=0; windowTN=0; % (Needed after Week 3)
     pixelTP=0; pixelFN=0; pixelFP=0; pixelTN=0;
     
     files = ListFiles(directory);
@@ -67,10 +67,10 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         % Candidate Generation (pixel) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         pixelCandidates = CandidateGenerationPixel_Color(im, pixel_method);
         element=strel('octagon',21);
-        pixelCandidates = task3(pixelCandidates, pixel_method, element);
+        pixelCandidates = morf(pixelCandidates, element);
         
         % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % windowCandidates = CandidateGenerationWindow_Example(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
+        windowCandidates = CandidateGenerationWindow_Example(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
         
         % Accumulate pixel performance of the current image %%%%%%%%%%%%%%%%%
         pixelAnnotation = imread(strcat(directory, '/mask/mask.', files(i).name(1:size(files(i).name,2)-3), 'png'))>0;
@@ -85,19 +85,21 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         pixelTN = pixelTN + localPixelTN;
         
         % Accumulate object performance of the current image %%%%%%%%%%%%%%%%  (Needed after Week 3)
-        % windowAnnotations = LoadAnnotations(strcat(directory, '/gt/gt.', files(i).name(1:size(files(i).name,2)-3), 'txt'));
-        % [localWindowTP, localWindowFN, localWindowFP] = PerformanceAccumulationWindow(windowCandidates, windowAnnotations);
-        % windowTP = windowTP + localWindowTP;
-        % windowFN = windowFN + localWindowFN;
-        % windowFP = windowFP + localWindowFP;
+        windowAnnotations = LoadAnnotations(strcat(directory, '/gt/gt.', files(i).name(1:size(files(i).name,2)-3), 'txt'));
+        [localWindowTP, localWindowFN, localWindowFP, localWindowTN] = PerformanceAccumulationWindow(windowCandidates, windowAnnotations);
+        windowTP = windowTP + localWindowTP;
+        windowFN = windowFN + localWindowFN;
+        windowFP = windowFP + localWindowFP;
+        windowTN = windowTN + localWindowTN;
     end
 
     % Plot performance evaluation
     [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity, pixelF1] = PerformanceEvaluationPixel(pixelTP, pixelFP, pixelFN, pixelTN);
-    % [windowPrecision, windowAccuracy] = PerformanceEvaluationWindow(windowTP, windowFN, windowFP); % (Needed after Week 3)
+    [windowPrecision, windowAccuracy, windowSpecificity, windowSensitivity, windowF1] = PerformanceEvaluationWindow(windowTP, windowFN, windowFP, windowTN); % (Needed after Week 3)
     
     [pixelPrecision, pixelAccuracy, pixelSpecificity, pixelSensitivity, pixelF1]
     
+    disp(sprintf('PIXEL INFORMATION'));
     disp(sprintf('Precision: %f', pixelPrecision));
     disp(sprintf('Accuracy: %f', pixelAccuracy));
     disp(sprintf('Specificity: %f', pixelSpecificity));
@@ -107,7 +109,17 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     disp(sprintf('FP: %f', pixelFP));
     disp(sprintf('FN: %f', pixelFN));
     
-    % [windowPrecision, windowAccuracy]
+    [windowPrecision, windowAccuracy]
+    
+    disp(sprintf('WINDOW INFORMATION'));
+    disp(sprintf('Precision: %f', windowPrecision));
+    disp(sprintf('Accuracy: %f', windowAccuracy));
+    disp(sprintf('Specificity: %f', windowSpecificity));
+    disp(sprintf('Sensitivity (Recall): %f', windowSensitivity));
+    disp(sprintf('F1 score: %f', windowF1));
+    disp(sprintf('TP: %f', windowTP));
+    disp(sprintf('FP: %f', windowFP));
+    disp(sprintf('FN: %f', windowFN));
     
     %profile report
     %profile off
