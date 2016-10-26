@@ -3,10 +3,14 @@ Folder for the second week.
 Tasks:
 
 1- Implement custom morphology operators.
+
 2- Test these operators
+
 3- Improve the segmentation with morphology.
+
 4- Implement histogram back-projection.
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+--
 
 # Team3 - icv-m1-project - TrafficSignDetection
 Introduction to Human and Computer Vision project - week 2
@@ -58,7 +62,24 @@ Parameters:
 
 **element:** Structural element to remove the noise
 
+## Task 4 - Histogram Back Projection
+How to generate histograms:
 
+```
+task4( directory, bins )
+```
+Parameters:
 
+**directory**: Path were the training images are stored.
+**bins**: Number of bins of the generated histograms.
 
+File to try different thresholds:
+```
+find_th_hist(directory)
+```
 
+Parameters:
+
+**directory**: Path were the training images are stored.
+
+To use the created histograms for evaluating just call TrafficSignDetection with 'hbp' as the **pixel_method** argument.
