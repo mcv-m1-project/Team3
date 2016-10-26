@@ -57,13 +57,14 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     
     for i=1:2%nFiles
         
+        
         if (mod(i, 25) == 0)
             i
         end
         
         % Read file
         im = imread(strcat(directory,'/',files(i).name));
-             
+                    
         % Candidate Generation (pixel) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         pixelCandidates = CandidateGenerationPixel_Color(im, pixel_method);
         element=strel('diamond',4);
