@@ -1,22 +1,23 @@
-function [ output_args ] = SlidingWindow( im, step, iWinPx, jWinPx )
+function [ windowCandidates ] = SlidingWindow( im, step, iWinPx, jWinPx, thr )
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
     
     [rows, cols] = size(im);
     % Number of windows in the i and j dimensions
-    iWins = idivide(int32(rows), int32(step), 'floor') - (iWinPx - 1);
-    jWins = idivide(int32(cols), int32(step), 'floor') - (jWinPx - 1);
+    iWins = idivide(int32(rows) - (iWinPx - step), int32(step), 'floor');
+    jWins = idivide(int32(cols) - (jWinPx - step), int32(step), 'floor');
     
-    for i = 0 : iWins
-        for j = 0 : jWins
-            ii = i*step;
-            jj = j * step;
-            
-            im(ii:ii+iWinPx, jj:jj+jWinPx) ;
+    windowCandidates = [];
+    
+    for i = 1 : iWins
+        for j = 1 : jWins
+            ii = i*step + 1;
+            jj = j*step + 1;
+            filRatio = sum ( im(ii:ii+iWinPx, jj:jj+jWinPx) ) / (iWinPx*jWinPx);
+            if filRatio > thr
+                windowCandidates(end+1) = struct('x',double(jj),'y',double(ii),'w',double(jWinPx),'h',double(iWinPx));
+            end
         end
     end
-    
-    
-
 end
 
