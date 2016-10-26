@@ -1,9 +1,9 @@
-function [precision, sensitivity, accuracy] = PerformanceEvaluationWindow(TP, FN, FP)
+function [windowPrecision, windowAccuracy, windowSpecificity, windowSensitivity, windowF1] = PerformanceEvaluationWindow(windowTP, windowFN, windowFP, windowTN)
     % PerformanceEvaluationWindow
     % Function to compute different performance indicators (Precision, accuracy, 
     % sensitivity/recall) at the object level
     %
-    % [precision, sensitivity, accuracy] = PerformanceEvaluationPixel(TP, FN, FP)
+    % [precision, sensitivity, accuracy] = PerformanceEvaluationwindow(TP, FN, FP)
     %
     %    Parameter name      Value
     %    --------------      -----
@@ -13,7 +13,9 @@ function [precision, sensitivity, accuracy] = PerformanceEvaluationWindow(TP, FN
     %
     % The function returns the precision, accuracy and sensitivity
 
-    precision   = TP / (TP+FP); % Q: What if i do not have TN?
-    sensitivity = TP / (TP+FN)
-    accuracy    = TP / (TP+FN+FP);
+    windowPrecision = windowTP / (windowTP+windowFP);
+    windowAccuracy = (windowTP+windowTN) / (windowTP+windowFP+windowFN+windowTN);
+    windowSpecificity = windowTN / (windowTN+windowFP);
+    windowSensitivity = windowTP / (windowTP+windowFN); % recall
+    windowF1 = 2*windowTP / (2*windowTP + windowFP + windowFN);
 end

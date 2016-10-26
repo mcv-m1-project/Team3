@@ -1,4 +1,4 @@
-function [TP,FN,FP] = PerformanceAccumulationWindow(detections, annotations)
+function [TP,FN,FP,TN] = PerformanceAccumulationWindow(detections, annotations)
     % PerformanceAccumulationWindow
     % Function to compute different performance indicators (True Positive, 
     % False Positive, False Negative) at the object level.
@@ -23,12 +23,17 @@ function [TP,FN,FP] = PerformanceAccumulationWindow(detections, annotations)
     detectionsUsed = zeros(1,size(detections,1));
     annotationsUsed = zeros(1,size(annotations,1));
     TP = 0;
+    TN = 0;
     for i=1:size(annotations,1),
         for j=1:size(detections,1),
             if detectionsUsed(j)==0 && RoiOverlapping(annotations(i), detections(j)) > 0.5
                 TP = TP+1;
                 detectionsUsed(j) = 1;
                 annotationsUsed(i) = 1;
+            end
+            
+            if detectionsUsed(j)==0 && RoiOverlapping(annotations(i), detections(j)) < 0.5
+                TN = TN+1;
             end
         end
     end
