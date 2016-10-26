@@ -72,6 +72,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
+        %windowcandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method); 
         
         imshow(pixelCandidates)
         hold on;
@@ -251,6 +252,10 @@ function [windowCandidates] = CandidateGenerationWindow(im, pixelCandidates, win
     windowCandidates = SlidingWindow(pixelCandidates, 8, 32, 32, 0.5);
 end  
 
+function [windowCandidates] = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method)
+    iImg = cumsum(cumsum(double(im)),2);
+    windowCandidates = IntegralSlidingWindow(iImg, 8, 32, 32, 0.5);
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
