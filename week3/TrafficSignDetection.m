@@ -74,9 +74,10 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         imshow(pixelCandidates)
         hold on;
-        for a=1:size(windowCandidates(1))
-            rectangle()
+        for a=1:size(windowCandidates, 1)
+            rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','y');
         end    
+        waitforbuttonpress;
         
         % Accumulate pixel performance of the current image %%%%%%%%%%%%%%%%%
         pixelAnnotation = imread(strcat(directory, '/mask/mask.', files(i).name(1:size(files(i).name,2)-3), 'png'))>0;
@@ -246,7 +247,7 @@ end
 
 function [windowCandidates] = CandidateGenerationWindow(im, pixelCandidates, window_method)
     %windowCandidates = [ struct('x',double(12),'y',double(17),'w',double(32),'h',double(32)) ];
-    windowCandidates = SlidingWindow(pixelCandidates, 8, 32, 32, 0.01);
+    windowCandidates = SlidingWindow(pixelCandidates, 8, 32, 32, 0.5);
 end  
 
 

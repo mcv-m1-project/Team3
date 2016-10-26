@@ -9,11 +9,16 @@ function [ windowCandidates ] = SlidingWindow( im, step, iWinPx, jWinPx, thr )
     
     windowCandidates = [];
     
+    %imshow(im);
+    %hold on;
+    
     for i = 0 : iWins-1
         for j = 0 : jWins-1
             ii = i*step + 1;
             jj = j*step + 1;
-            filRatio = sum ( im(ii:ii+iWinPx-1, jj:jj+jWinPx-1) ) / (iWinPx*jWinPx);
+            filRatio = ( sum ( sum(im(ii:ii+iWinPx-1, jj:jj+jWinPx-1)) ) ) / (iWinPx*jWinPx);
+            %rectangle('Position',[jj ,ii ,jWinPx,iWinPx],'EdgeColor','y');
+            %waitforbuttonpress;
             if filRatio > thr
                 windowCandidates = [ windowCandidates; struct('x',double(jj),'y',double(ii),'w',double(jWinPx),'h',double(iWinPx)) ];
             end
