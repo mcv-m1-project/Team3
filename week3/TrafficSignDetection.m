@@ -74,12 +74,20 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
         %windowcandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method); 
         
+        % Convert the windowCandidates into the nms format
+        %nmsWindows = struct2nmsmat(windowCandidates, confs);
+        
+        % Call NMS
+        %nms(nmsWindows, 0.5);
+        
+        % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         imshow(pixelCandidates)
         hold on;
         for a=1:size(windowCandidates, 1)
             rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','y');
         end    
         waitforbuttonpress;
+        % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         % Accumulate pixel performance of the current image %%%%%%%%%%%%%%%%%
         pixelAnnotation = imread(strcat(directory, '/mask/mask.', files(i).name(1:size(files(i).name,2)-3), 'png'))>0;
