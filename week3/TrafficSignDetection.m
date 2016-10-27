@@ -55,7 +55,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     
     tic
     
-    for i=1:2%nFiles
+    for i=1:nFiles
         
         
         if (mod(i, 25) == 0)
@@ -74,14 +74,14 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
         %windowcandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method); 
         
-        % Convert the windowCandidates into the nms format
-        %nmsWindows = struct2nmsmat(windowCandidates, confs);
         
         % Call NMS
         %maxIdxs = nms(nmsWindows, confs, 0.5);
+        windowCandidates = NonMaxS(windowCandidates, 0.2);
         %windowCandidates = windowCandidates(maxIdxs);
         
         % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
+        hold off
         imshow(pixelCandidates)
         hold on;
         for a=1:size(windowCandidates, 1)
