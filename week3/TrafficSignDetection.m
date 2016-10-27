@@ -78,7 +78,8 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         %nmsWindows = struct2nmsmat(windowCandidates, confs);
         
         % Call NMS
-        %nms(nmsWindows, 0.5);
+        %maxIdxs = nms(nmsWindows, confs, 0.5);
+        %windowCandidates = windowCandidates(maxIdxs);
         
         % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         imshow(pixelCandidates)

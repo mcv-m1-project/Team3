@@ -1,4 +1,4 @@
-function pick = nms(boxes, overlap)
+function pick = nms(boxes, confs, overlap)
 % Non-maximum suppression.
 %   pick = nms(boxes, overlap) 
 % 
@@ -35,11 +35,11 @@ if isempty(boxes)
   pick = [];
 
 else
-  x1 = boxes(:,1);
-  y1 = boxes(:,2);
-  x2 = boxes(:,3);
-  y2 = boxes(:,4);
-  s = boxes(:,end);
+  x1 = [boxes.x];%boxes(:,1);
+  y1 = [boxes.y];%boxes(:,2);
+  x2 = x1 + [boxes.w];%boxes(:,3);
+  y2 = x2 + [boxes.h];%boxes(:,4);
+  s = confs;%boxes(:,end);
   area = (x2-x1+1) .* (y2-y1+1);
 
   [vals, I] = sort(s);
@@ -67,6 +67,7 @@ else
     end
     I(suppress) = [];
   end
-
+  
+  
 end
 
