@@ -74,6 +74,9 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
         %windowcandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method); 
         
+        %S'han de canviar els valors pels retornats per task1 week1
+        %windowCandidates = task1(pixelCandidates,9531,8736,0.74,0.19,1.09,0.22);
+        
         % Convert the windowCandidates into the nms format
         %nmsWindows = struct2nmsmat(windowCandidates, confs);
         
