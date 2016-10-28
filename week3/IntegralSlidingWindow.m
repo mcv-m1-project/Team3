@@ -1,4 +1,4 @@
-function [ windowCandidates ] = IntegralSlidingWindow( im, step, iWinPx, jWinPx, thr )
+function [ windowCandidates ] = IntegralSlidingWindow( iImg, step, iWinPx, jWinPx, low_thr, high_thr )
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -14,7 +14,7 @@ function [ windowCandidates ] = IntegralSlidingWindow( im, step, iWinPx, jWinPx,
             ii = i*step + 1;
             jj = j*step + 1;
             filRatio = (iImg(ii+iWinPx-1,jj+jWinPx-1) - iImg(ii,jj+jWinPx-1) - iImg(ii+iWinPx-1,jj) + iImg(ii,jj)) / (iWinPx*jWinPx);
-            if filRatio > thr
+            if (filRatio > low_thr) && (filRatio < high_thr)
                 windowCandidates = [ windowCandidates; struct('x',double(jj),'y',double(ii),'w',double(jWinPx),'h',double(iWinPx)) ];
             end
         end
