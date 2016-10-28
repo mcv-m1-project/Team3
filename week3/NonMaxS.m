@@ -34,13 +34,17 @@ function [ boxes_nms ] = NonMaxS( boxes, overlapTh )
             
             % Average the bboxes that overlap
             keep_x = [ boxes(i).x boxes(idx(overlap > overlapTh & overlap < 1)).x ];
-            mean_keep_x = mean(keep_x);
+            mean_keep_x = min(keep_x);
             keep_y = [ boxes(i).y boxes(idx(overlap > overlapTh & overlap < 1)).y ];
-            mean_keep_y = mean(keep_y);
-            keep_w = [ boxes(i).w boxes(idx(overlap > overlapTh & overlap < 1)).w ];
-            mean_keep_w = max(keep_w);
-            keep_h = [ boxes(i).h boxes(idx(overlap > overlapTh & overlap < 1)).h ];
-            mean_keep_h = max(keep_h);
+            mean_keep_y = min(keep_y);
+%             keep_w = [ boxes(i).w boxes(idx(overlap > overlapTh & overlap < 1)).w ];
+%             mean_keep_w = max(keep_w);
+%             keep_h = [ boxes(i).h boxes(idx(overlap > overlapTh & overlap < 1)).h ];
+%             mean_keep_h = max(keep_h);
+            keep_x2 = [ x2(i) x2(idx(overlap > overlapTh & overlap < 1)) ];
+            mean_keep_w = max(keep_x2)-mean_keep_x;
+            keep_y2 = [ y2(i) y2(idx(overlap > overlapTh & overlap < 1)) ];
+            mean_keep_h = max(keep_y2)-mean_keep_y;
             
             new = struct('x',mean_keep_x,'y',mean_keep_y,'w',mean_keep_w,'h',mean_keep_h);
             boxes_nms = [boxes_nms ; new];
