@@ -16,16 +16,18 @@ function [ windowCandidates ] = convTask5( pixelCandidates, step, iWinPx, jWinPx
     
     [rows cols] = find(output_args > low_thr & output_args < high_thr);
     
-    rows = rows - double(idivide(int32(iWinPx), 2, 'floor'));
-    cols = cols - double(idivide(int32(jWinPx), 2, 'floor'));
+    rows = rows - double(idivide(int32(iWinPx), 2, 'ceil'));
+    cols = cols - double(idivide(int32(jWinPx), 2, 'ceil'));
     
     rows = num2cell(rows);
     cols = num2cell(cols);
     
-    [windowCandidates(1:length(rows)).x] = deal(rows{:});
-    [windowCandidates(1:length(rows)).y] = deal(cols{:});
-    [windowCandidates(1:length(rows)).w] = deal(jWinPx); %deal(rows{:});
-    [windowCandidates(1:length(rows)).h] = deal(iWinPx); %deal(rows{:});
+    [windowCandidates(1:length(rows)).x] = deal(cols{:});
+    [windowCandidates(1:length(rows)).y] = deal(rows{:});
+    [windowCandidates(1:length(rows)).w] = deal(jWinPx); 
+    [windowCandidates(1:length(rows)).h] = deal(iWinPx);
+    
+    windowCandidates = transpose(windowCandidates);
     
 %     windowCandidates = [];
 %     for i = 1 : size(rows, 1)
@@ -51,7 +53,5 @@ function [ windowCandidates ] = convTask5( pixelCandidates, step, iWinPx, jWinPx
 %             end
 %         end
 %     end
-
-
 end
 
