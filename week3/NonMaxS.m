@@ -10,9 +10,9 @@ function [ boxes_nms ] = NonMaxS( boxes, overlapTh )
         x1 = [boxes.x];
         y1 = [boxes.y];
         x2 = x1 + [boxes.w];
-        y2 = x2 + [boxes.h];
+        y2 = y1 + [boxes.h];
         
-        area = (x2-x1+1) .* (y2-y1+1);
+        area = (x2-x1) .* (y2-y1);
         [vals, idx] = sort(y2);
         
         while ~isempty(idx)
@@ -26,29 +26,28 @@ function [ boxes_nms ] = NonMaxS( boxes, overlapTh )
             yy2 = min(y2(i), y2(idx(1:last-1)));
             
             % Compute the width and height of the bounding box
-            w = max(0, xx2-xx1+1);
-            h = max(0, yy2-yy1+1);
+            w = max(0.0, xx2-xx1+1);
+            h = max(0.0, yy2-yy1+1);
             
             % Compute the ratio of overlap
             overlap = (w .* h) ./ area(idx(1:last-1));
             
             % Average the bboxes that overlap
-            keep_x = [ boxes(last).x boxes(overlap > overlapTh).x ];
+            keep_x = [ boxes(i).x boxes(idx(overlap > overlapTh & overlap < 1)).x ];
             mean_keep_x = mean(keep_x);
-            keep_y = [ boxes(last).y boxes(overlap > overlapTh).y ];
+            keep_y = [ boxes(i).y boxes(idx(overlap > overlapTh & overlap < 1)).y ];
             mean_keep_y = mean(keep_y);
-            keep_w = [ boxes(last).w boxes(overlap > overlapTh).w ];
-            mean_keep_w = mean(keep_w);
-            keep_h = [ boxes(last).h boxes(overlap > overlapTh).h ];
-            mean_keep_h = mean(keep_h);
+            keep_w = [ boxes(i).w boxes(idx(overlap > overlapTh & overlap < 1)).w ];
+            mean_keep_w = max(keep_w);
+            keep_h = [ boxes(i).h boxes(idx(overlap > overlapTh & overlap < 1)).h ];
+            mean_keep_h = max(keep_h);
             
-            boxes_nms = [boxes_nms ; struct('x',mean_keep_x,'y',mean_keep_y,'w',mean_keep_w,'h',mean_keep_h)];
-       
+            new = struct('x',mean_keep_x,'y',mean_keep_y,'w',mean_keep_w,'h',mean_keep_h);
+            boxes_nms = [boxes_nms ; new];
+
             % Delete all indexes from the index list that have
-            idx(last) = [];
-            idx(overlap > overlapTh) = [];
+            idx([last find(overlap > overlapTh)]) = [];
         end
-%        boxes_nms = boxes(pick);
     end
     
 
