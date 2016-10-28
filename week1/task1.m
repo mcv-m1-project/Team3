@@ -43,6 +43,16 @@ function [ output_args ] = task1( pathGt, pathMask )
     disp( sprintf('avgSize: %f ', mean(cell2mat(gtObjs(:,3)))));
     disp( sprintf('stdSize: %f \n', std(cell2mat(gtObjs(:,3)))));
     
+    disp( sprintf('maxWidth: %f ', max(cell2mat(gtObjs(:,1)))));
+    disp( sprintf('minWidth: %f ', min(cell2mat(gtObjs(:,1)))));
+    disp( sprintf('avgWidth: %f ', mean(cell2mat(gtObjs(:,1)))));
+    disp( sprintf('stdWidth: %f \n', std(cell2mat(gtObjs(:,1)))));
+    
+    disp( sprintf('maxHeight: %f ', max(cell2mat(gtObjs(:,2)))));
+    disp( sprintf('minHeight: %f ', min(cell2mat(gtObjs(:,2)))));
+    disp( sprintf('avgHeight: %f ', mean(cell2mat(gtObjs(:,2)))));
+    disp( sprintf('stdHeight: %f \n', std(cell2mat(gtObjs(:,2)))));
+    
     disp( sprintf('maxAspectRatio: %f ', max(cell2mat(gtObjs(:,4)))));
     disp( sprintf('minAspectRatio: %f ', min(cell2mat(gtObjs(:,4)))));
     disp( sprintf('avgAspectRatio: %f ', mean(cell2mat(gtObjs(:,4)))));
