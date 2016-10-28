@@ -11,13 +11,15 @@ function [ windowCandidates ] = convTask5( pixelCandidates, step, iWinPx, jWinPx
     h1 = double(ones(iWinPx, 1));
     h2 = double(ones(jWinPx, 1));
     
-    output_args = conv2(h1, h2, double(pixelCandidates), 'same');
-    output_args = output_args ./ (iWinPx * jWinPx);
+    conv = conv2(h1, h2, double(pixelCandidates), 'same');
+    conv = conv(1:step:end, 1:step:end);
+    %conv = blockproc(pixelCandidates, [iWinPx jWinPx], @sum);
+    conv = conv ./ (iWinPx * jWinPx);
     
-    [rows cols] = find(output_args > low_thr & output_args < high_thr);
+    [rows cols] = find(conv > low_thr & conv < high_thr);
     
-    rows = rows - double(idivide(int32(iWinPx), 2, 'ceil'));
-    cols = cols - double(idivide(int32(jWinPx), 2, 'ceil'));
+    rows = (step*rows) - double(idivide(int32(iWinPx), 2, 'ceil'));
+    cols = (step*cols) - double(idivide(int32(jWinPx), 2, 'ceil'));
     
     rows = num2cell(rows);
     cols = num2cell(cols);

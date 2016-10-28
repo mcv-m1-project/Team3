@@ -72,8 +72,8 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
-        %windowCandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
-        windowCandidates = ConvCandidateGenerationWindow(im, pixelCandidates, window_method);
+        windowCandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
+        %windowCandidates = ConvCandidateGenerationWindow(im, pixelCandidates, window_method);
         
         %S'han de canviar els valors pels retornats per task1 week1
         %windowCandidates = task1(pixelCandidates,9531,8736,0.74,0.19,1.09,0.22);
@@ -285,7 +285,7 @@ function [windowCandidates] = ConvCandidateGenerationWindow(im, pixelCandidates,
     sizes = [32 64 128];
     windowCandidates = [];
     for s=1:length(sizes)
-        windowCandidates = [ windowCandidates; convTask5(pixelCandidates, 0, sizes(s), sizes(s), 0.5, 0.85) ];
+        windowCandidates = [ windowCandidates; convTask5(pixelCandidates, 8, sizes(s), sizes(s), 0.5, 0.85) ];
         windowCandidates = NonMaxS(windowCandidates, 0.2);
     end
     windowCandidates = NonMaxS(windowCandidates, 0.2);
