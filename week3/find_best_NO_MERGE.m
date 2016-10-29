@@ -8,7 +8,7 @@ function find_best_NO_MERGE( directory )
     nFiles = size(files, 1);
     disp(sprintf('Training with %d Files', nFiles));
 
-    BUCTrain = fopen('BUC_NO_MERGING_train_refined.txt','w');
+    BUCTrain = fopen('BUC_NO_MERGING_train.txt','w');
 
     th_low = [0.5, 0.6, 0.7];
     th_high = [1];
@@ -20,8 +20,8 @@ function find_best_NO_MERGE( directory )
         for hi=1:length(th_high)
             for ni=1:length(nms_th)
                 %for wi=1:length(win_sizes)
-                    disp(sprintf('Training with %f %f %f %f', th_low(li), th_high(hi), nms_th(ni), win_sizes));
-                    fprintf(BUCTrain, 'Training with %f %f %f %f\n', th_low(li), th_high(hi), nms_th(ni), win_sizes);
+                    disp(sprintf('Training with %f %f %f', th_low(li), th_high(hi), nms_th(ni)));
+                    fprintf(BUCTrain, 'Training with %f %f %f\n', th_low(li), th_high(hi), nms_th(ni));
 
                     windowTP=0; windowFN=0; windowFP=0; windowTN=0; % original
                     fwindowTP=0; fwindowFN=0; fwindowFP=0; fwindowTN=0; % filtered
@@ -41,7 +41,7 @@ function find_best_NO_MERGE( directory )
                         pixelCandidates = morf(pixelCandidates, element);
 
                         % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                        windowCandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, 'Integral', th_low(li), th_high(hi), win_sizes);
+                        windowCandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, 'Integral', th_low(li), th_high(hi), win_sizes, nms_th(ni));
 
 %                         new_windowCandidates = NonMaxS(windowCandidates, nms_th(ni));
 %                         while length(new_windowCandidates) ~= length(windowCandidates)
@@ -197,13 +197,13 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
     end
 end
 
-function [windowCandidates] = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method, low_th, high_th, size_w)
+function [windowCandidates] = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method, low_th, high_th, size_w, nms_th)
     iImg = cumsum(cumsum(double(pixelCandidates)),2);
-    windowCandidates = IntegralSlidingWindow(iImg, floor(size_w(1)/4), size_w(1), size_w(1), low_th, high_th);
+    windowCandidates = [];
     
-    for s=2:length(size_w)
-        windowCandidates = [ windowCandidates; IntegralSlidingWindow(iImg, floor(size_w(s)/4), size_w(s), size_w(s), 0.5, 0.85) ];
-        windowCandidates = NonMaxS(windowCandidates, 0.2);
+    for s=1:length(size_w)
+        windowCandidates = [ windowCandidates; IntegralSlidingWindow(iImg, floor(size_w(s)/4), size_w(s), size_w(s), low_th, high_th) ];
+        windowCandidates = NonMaxS(windowCandidates, nms_th);
     end
-    windowCandidates = NonMaxS(windowCandidates, 0.2);
+    windowCandidates = NonMaxS(windowCandidates, nms_th);
 end
