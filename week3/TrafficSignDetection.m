@@ -72,8 +72,10 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
-        windowCandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
+        %windowCandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
         %windowCandidates = ConvCandidateGenerationWindow(im, pixelCandidates, window_method);
+        windowCandidates = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
+
         
         %S'han de canviar els valors pels retornats per task1 week1
         %windowCandidates = task1(pixelCandidates,9531,8736,0.74,0.19,1.09,0.22);
@@ -82,18 +84,18 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
 
         % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         
-%         imshow(pixelCandidates)
-%         
-%         for a=1:size(windowAnnotations, 1)
-%             rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
-%         end 
-% 
-%         for a=1:size(windowCandidates, 1)
-%             rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
-%         end 
-%         
-%         waitforbuttonpress
-%         waitforbuttonpress
+        imshow(pixelCandidates)
+        
+        for a=1:size(windowAnnotations, 1)
+            rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
+        end 
+
+        for a=1:size(windowCandidates, 1)
+            rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
+        end 
+        
+        waitforbuttonpress
+        waitforbuttonpress
         
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -279,6 +281,20 @@ function [windowCandidates] = IntegralCandidateGenerationWindow(im, pixelCandida
         windowCandidates = NonMaxS(windowCandidates, 0.2);
     end
     windowCandidates = NonMaxS(windowCandidates, 0.2);
+end
+
+function [windowCandidates] = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method)
+    iImg = cumsum(cumsum(double(pixelCandidates)),2);
+    windowCandidates = IntegralSlidingWindow(iImg, 10, 40, 40, 0.7, 1);
+
+    new_windowCandidates = NonMaxS(windowCandidates, 0.3);
+
+    while length(new_windowCandidates) ~= length(windowCandidates)
+        windowCandidates = new_windowCandidates;
+        new_windowCandidates = NonMaxS(windowCandidates, 0.3);
+    end
+    windowCandidates = new_windowCandidates;
+    
 end
 
 function [windowCandidates] = ConvCandidateGenerationWindow(im, pixelCandidates, window_method)
