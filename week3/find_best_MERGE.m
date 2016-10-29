@@ -8,13 +8,13 @@ function find_best_MERGE( directory )
     nFiles = size(files, 1);
     disp(sprintf('Training with %d Files', nFiles));
 
-    BUCTrain = fopen('BUC_MERGING_train.txt','w');
+    BUCTrain = fopen('BUC_MERGING_train_refined.txt','w');
 
-    th_low = [0.5, 0.6, 0.7];
+    th_low = [0.65, 0.7, 0.75];
     th_high = [1];
 
-    nms_th = [0.1, 0.2, 0.3];
-    win_sizes = [20, 30, 40];
+    nms_th = [0.3, 0.35, 0.4];
+    win_sizes = [35, 40, 45];
 
     for li=1:length(th_low)
         for hi=1:length(th_high)
