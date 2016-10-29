@@ -2,6 +2,15 @@
 Introduction to Human and Computer Vision project - week 3
 
 ## Task 1 - Conected components
+Returns the traffic signals candidates computed by connected components. 
+How to run it:
+```
+ConnectedComponents( pixelCandidates)
+```
+Parameters:
+
+**pixelCandidates:** target image (grayscale or logical)
+
 
 ## Task 2 - Sliding Window
 Compute the sliding window of the binary image
