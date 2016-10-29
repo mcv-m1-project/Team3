@@ -8,9 +8,13 @@ function find_best_NO_MERGE( directory )
     nFiles = size(files, 1);
     disp(sprintf('Training with %d Files', nFiles));
 
+    BUCTrain = fopen('BUC_NO_MERGING_train_refined.txt','w');
 
+    th_low = [0.5, 0.6, 0.7];
     th_high = [1];
 
+    nms_th = [0.2, 0.3, 0.4];
+    win_sizes = [32, 64, 96, 128];
 
     for li=1:length(th_low)
         for hi=1:length(th_high)
