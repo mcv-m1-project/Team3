@@ -70,32 +70,39 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         element=strel('diamond',4);
         pixelCandidates = morf(pixelCandidates, element);
         
-        % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
-        %windowCandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
-        %windowCandidates = ConvCandidateGenerationWindow(im, pixelCandidates, window_method);
-        windowCandidates = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
-
-        
-        %S'han de canviar els valors pels retornats per task1 week1
-        %windowCandidates = task1(pixelCandidates,9531,8736,0.74,0.19,1.09,0.22);
+        % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
+        switch window_method
+            case 'Sliding window'
+                windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
+            case 'integral'
+                windowCandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
+            case 'convolution'
+                windowCandidates = ConvCandidateGenerationWindow(im, pixelCandidates, window_method);
+            case 'merge integral'
+                windowCandidates = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
+            case 'connected components'
+                windowCandidates = ConnectedComponents(pixelCandidates);
+            otherwise
+                error('Incorrect window method defined');
+                return
+        end
         
         windowAnnotations = LoadAnnotations(strcat(directory, '/gt/gt.', files(i).name(1:size(files(i).name,2)-3), 'txt'));   
 
         % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         
-        imshow(pixelCandidates)
-        
-        for a=1:size(windowAnnotations, 1)
-            rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
-        end 
-
-        for a=1:size(windowCandidates, 1)
-            rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
-        end 
-        
-        waitforbuttonpress
-        waitforbuttonpress
+%         imshow(pixelCandidates)
+%         
+%         for a=1:size(windowAnnotations, 1)
+%             rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
+%         end 
+% 
+%         for a=1:size(windowCandidates, 1)
+%             rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
+%         end 
+%         
+%         waitforbuttonpress
+%         waitforbuttonpress
         
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -263,18 +270,31 @@ end
     
 
 function [windowCandidates] = CandidateGenerationWindow(im, pixelCandidates, window_method)
-    sizes = [32 64 128];
+    sizes = [32 64];
     windowCandidates = [];
     for s=1:length(sizes)
-        windowCandidates = [ windowCandidates; SlidingWindow(pixelCandidates, 8, sizes(s), sizes(s), 0.5, 0.85) ];
+        windowCandidates = [ windowCandidates; SlidingWindow(pixelCandidates, 1, sizes(s), sizes(s), 0.5, 0.85) ];
         windowCandidates = NonMaxS(windowCandidates, 0.2);
     end
     windowCandidates = NonMaxS(windowCandidates, 0.2);
-end  
+end
+
+function [windowCandidates] = MergeCandidateGenerationWindow(im, pixelCandidates, window_method)
+    windowCandidates = SlidingWindow(pixelCandidates, 10, 40, 40, 0.7, 1);
+
+    new_windowCandidates = NonMaxS(windowCandidates, 0.3);
+
+    while length(new_windowCandidates) ~= length(windowCandidates)
+        windowCandidates = new_windowCandidates;
+        new_windowCandidates = NonMaxS(windowCandidates, 0.3);
+    end
+    windowCandidates = new_windowCandidates;
+    
+end
 
 function [windowCandidates] = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method)
     iImg = cumsum(cumsum(double(pixelCandidates)),2);
-    sizes = [32 64 128];
+    sizes = [32 64];
     windowCandidates = [];
     for s=1:length(sizes)
         windowCandidates = [ windowCandidates; IntegralSlidingWindow(iImg, 8, sizes(s), sizes(s), 0.5, 0.85) ];
@@ -298,10 +318,10 @@ function [windowCandidates] = MergeIntegralCandidateGenerationWindow(im, pixelCa
 end
 
 function [windowCandidates] = ConvCandidateGenerationWindow(im, pixelCandidates, window_method)
-    sizes = [32 64 128];
+    sizes = [32 64];
     windowCandidates = [];
     for s=1:length(sizes)
-        windowCandidates = [ windowCandidates; convTask5(pixelCandidates, 8, sizes(s), sizes(s), 0.5, 0.85) ];
+        windowCandidates = [ windowCandidates; convTask5(pixelCandidates, 1, sizes(s), sizes(s), 0.5, 0.85) ];
         windowCandidates = NonMaxS(windowCandidates, 0.2);
     end
     windowCandidates = NonMaxS(windowCandidates, 0.2);

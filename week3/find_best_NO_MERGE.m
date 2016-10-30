@@ -8,7 +8,7 @@ function find_best_NO_MERGE( directory )
     nFiles = size(files, 1);
     disp(sprintf('Training with %d Files', nFiles));
 
-    BUCTrain = fopen('BUC_NO_MERGING_train.txt','w');
+    BUCTrain = fopen('BUC_NO_MERGING_mean_nms_train.txt','w');
 
     th_low = [0.5, 0.6, 0.7];
     th_high = [1];
