@@ -55,6 +55,25 @@ Parameters:
 
 **high_thr:** upper boundary for detection
 
+##Task 4 - Region-based evaluation
+Perfon region based evaluation in addition to the pixel based evaluation. Added specifity and fscore to the provided matlad functions.
+How to run it:
+```
+PerformanceAccumulationWindow(windowCandidates, windowAnnotations);
+```
+Parameters:
+**windowCandidates:** detected windows
+**windowAnnotations:** ground truth annotated windows
+```
+PerformanceEvaluationWindow(windowTP, windowFN, windowFP, windowTN);
+```
+Parameters:
+**windowTP:** True positives acummulated value from previous PerformaneAccumulationWindow executions
+**windowFN:** False negatives acummulated value from previous PerformaneAccumulationWindow executions
+**windowFP:** False positives acummulated value from previous PerformaneAccumulationWindow executions
+**windowTN:** True negatives acummulated value from previous PerformaneAccumulationWindow executions
+
+
 ## Task 5 - Sliding Window with convolution
 Compute the sliding window using the filling ratio feature using the convolution. First convolves by columns and the output result is convolved by rows.
 How to run it:
