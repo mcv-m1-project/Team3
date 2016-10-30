@@ -79,7 +79,7 @@ function TrafficSignDetection_validation(input_dir, output_dir, pixel_method, wi
         end
         
         out_file1 = sprintf ('%s/test/pixelCandidates_%06d.png',  output_dir, ii);
-	    out_file2 = sprintf ('%s/test/windowCandidates_%06d.mat', output_dir, ii);
+	    out_file2 = sprintf ('%s/test/pixelCandidates_%06d.mat', output_dir, ii);
 
 	    imwrite (pixelCandidates, out_file1);
 	    save (out_file2, 'windowCandidates');        
