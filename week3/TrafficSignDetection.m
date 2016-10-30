@@ -274,7 +274,7 @@ function [windowCandidates] = CandidateGenerationWindow(im, pixelCandidates, win
     sizes = [32 64];
     windowCandidates = [];
     for s=1:length(sizes)
-        windowCandidates = [ windowCandidates; SlidingWindow(pixelCandidates, 1, sizes(s), sizes(s), 0.5, 0.85) ];
+        windowCandidates = [ windowCandidates; SlidingWindow(pixelCandidates, 8, sizes(s), sizes(s), 0.5, 1) ];
         windowCandidates = NonMaxS(windowCandidates, 0.2);
     end
     windowCandidates = NonMaxS(windowCandidates, 0.2);
@@ -298,7 +298,7 @@ function [windowCandidates] = IntegralCandidateGenerationWindow(im, pixelCandida
     sizes = [32 64];
     windowCandidates = [];
     for s=1:length(sizes)
-        windowCandidates = [ windowCandidates; IntegralSlidingWindow(iImg, 8, sizes(s), sizes(s), 0.5, 0.85) ];
+        windowCandidates = [ windowCandidates; IntegralSlidingWindow(iImg, 8, sizes(s), sizes(s), 0.5, 1) ];
         windowCandidates = NonMaxS(windowCandidates, 0.2);
     end
     windowCandidates = NonMaxS(windowCandidates, 0.2);
@@ -306,7 +306,7 @@ end
 
 function [windowCandidates] = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method)
     iImg = cumsum(cumsum(double(pixelCandidates)),2);
-    windowCandidates = IntegralSlidingWindow(iImg, 10, 40, 40, 0.7, 1);
+    windowCandidates = IntegralSlidingWindow(iImg, 10, 40, 40, 0.6, 1);
 
     new_windowCandidates = NonMaxS(windowCandidates, 0.3);
 

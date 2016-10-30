@@ -57,18 +57,32 @@ function TrafficSignDetection_validation(input_dir, output_dir, pixel_method, wi
      
         % Candidate Generation (pixel) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         pixelCandidates = CandidateGenerationPixel_Color(im, pixel_method);
-        element=strel('octagon',21);
-        pixelCandidates = task3(pixelCandidates, pixel_method, element);
-        
+        %element=strel('octagon',21);
+        element = strel('diamond', 4);
+        pixelCandidates = morf(pixelCandidates, element);
         
         % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        % windowCandidates = CandidateGenerationWindow_Example(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
-
+        switch window_method
+            case 'slidingWindow'
+                windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
+            case 'integral'
+                windowCandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
+            case 'convolution'
+                windowCandidates = ConvCandidateGenerationWindow(im, pixelCandidates, window_method);
+            case 'mergeIntegral'
+                windowCandidates = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
+            case 'connectedComponents'
+                windowCandidates = ConnectedComponents(pixelCandidates);
+            otherwise
+                error('Incorrect window method defined');
+                return
+        end
+        
         out_file1 = sprintf ('%s/test/pixelCandidates_%06d.png',  output_dir, ii);
-	    %out_file2 = sprintf ('%s/test/windowCandidates_%06d.mat', output_dir, ii);
+	    out_file2 = sprintf ('%s/test/windowCandidates_%06d.mat', output_dir, ii);
 
 	    imwrite (pixelCandidates, out_file1);
-	    %save (out_file2, 'windowCandidates');        
+	    save (out_file2, 'windowCandidates');        
     end
 end
  
@@ -183,6 +197,60 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
 end    
     
 
-function [windowCandidates] = CandidateGenerationWindow_Example(im, pixelCandidates, window_method)
-    windowCandidates = [ struct('x',double(12),'y',double(17),'w',double(32),'h',double(32)) ];
-end  
+function [windowCandidates] = CandidateGenerationWindow(im, pixelCandidates, window_method)
+    sizes = [32 64];
+    windowCandidates = [];
+    for s=1:length(sizes)
+        windowCandidates = [ windowCandidates; SlidingWindow(pixelCandidates, 1, sizes(s), sizes(s), 0.5, 0.85) ];
+        windowCandidates = NonMaxS(windowCandidates, 0.2);
+    end
+    windowCandidates = NonMaxS(windowCandidates, 0.2);
+end
+
+function [windowCandidates] = MergeCandidateGenerationWindow(im, pixelCandidates, window_method)
+    windowCandidates = SlidingWindow(pixelCandidates, 10, 40, 40, 0.7, 1);
+
+    new_windowCandidates = NonMaxS(windowCandidates, 0.3);
+
+    while length(new_windowCandidates) ~= length(windowCandidates)
+        windowCandidates = new_windowCandidates;
+        new_windowCandidates = NonMaxS(windowCandidates, 0.3);
+    end
+    windowCandidates = new_windowCandidates;
+    
+end
+
+function [windowCandidates] = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method)
+    iImg = cumsum(cumsum(double(pixelCandidates)),2);
+    sizes = [32 64];
+    windowCandidates = [];
+    for s=1:length(sizes)
+        windowCandidates = [ windowCandidates; IntegralSlidingWindow(iImg, 8, sizes(s), sizes(s), 0.5, 0.85) ];
+        windowCandidates = NonMaxS(windowCandidates, 0.2);
+    end
+    windowCandidates = NonMaxS(windowCandidates, 0.2);
+end
+
+function [windowCandidates] = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method)
+    iImg = cumsum(cumsum(double(pixelCandidates)),2);
+    windowCandidates = IntegralSlidingWindow(iImg, 10, 40, 40, 0.6, 1);
+
+    new_windowCandidates = NonMaxS(windowCandidates, 0.3);
+
+    while length(new_windowCandidates) ~= length(windowCandidates)
+        windowCandidates = new_windowCandidates;
+        new_windowCandidates = NonMaxS(windowCandidates, 0.3);
+    end
+    windowCandidates = new_windowCandidates;
+    
+end
+
+function [windowCandidates] = ConvCandidateGenerationWindow(im, pixelCandidates, window_method)
+    sizes = [32 64];
+    windowCandidates = [];
+    for s=1:length(sizes)
+        windowCandidates = [ windowCandidates; convTask5(pixelCandidates, 1, sizes(s), sizes(s), 0.5, 0.85) ];
+        windowCandidates = NonMaxS(windowCandidates, 0.2);
+    end
+    windowCandidates = NonMaxS(windowCandidates, 0.2);
+end
