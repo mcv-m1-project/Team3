@@ -15,7 +15,7 @@ function [ windowCandidates ] = convTask5( pixelCandidates, step, iWinPx, jWinPx
     h2 = double(ones(jWinPx, 1));
     
     % compute the convolution by rows and columns in two steps
-    conv = conv2(h1, h2, double(pixelCandidates), 'same');
+    conv = conv2(h1, h2, double(pixelCandidates), 'valid');
     conv = conv(1:step:end, 1:step:end);
     % compute filling ratio
     conv = conv ./ (iWinPx * jWinPx);

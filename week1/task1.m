@@ -58,7 +58,6 @@ function [ output_args ] = task1( pathGt, pathMask )
     disp( sprintf('avgAspectRatio: %f ', mean(cell2mat(gtObjs(:,4)))));
     disp( sprintf('stdAspectRatio: %f \n', std(cell2mat(gtObjs(:,4)))));
     
-    
     disp( sprintf('maxFillingRatio: %f ', max(cell2mat(gtObjs(:,6)))));
     disp( sprintf('minFillingRatio: %f ', min(cell2mat(gtObjs(:,6)))));
     disp( sprintf('avgFillingRatio: %f ', mean(cell2mat(gtObjs(:,6)))));
