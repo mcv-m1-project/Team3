@@ -62,6 +62,7 @@ How to run it:
 PerformanceAccumulationWindow(windowCandidates, windowAnnotations);
 ```
 Parameters:
+
 **windowCandidates:** detected windows
 
 **windowAnnotations:** ground truth annotated windows
