@@ -322,7 +322,7 @@ function [windowCandidates] = ConvCandidateGenerationWindow(im, pixelCandidates,
     sizes = [32 64];
     windowCandidates = [];
     for s=1:length(sizes)
-        windowCandidates = [ windowCandidates; convTask5(pixelCandidates, 1, sizes(s), sizes(s), 0.5, 0.85) ];
+        windowCandidates = [ windowCandidates; convTask5(pixelCandidates, 1, sizes(s), sizes(s), 0.5, 1) ];
         windowCandidates = NonMaxS(windowCandidates, 0.2);
     end
     windowCandidates = NonMaxS(windowCandidates, 0.2);
