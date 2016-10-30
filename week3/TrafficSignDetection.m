@@ -14,7 +14,8 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     %    --------------      -----
     %    'directory'         directory where the test images to analize  (.jpg) reside
     %    'pixel_method'      Name of the color space: 'opp', 'normrgb', 'lab', 'hsv', etc. (Weeks 2-5)
-    %    'window_method'     'SegmentationCCL' or 'SlidingWindow' (Weeks 3-5)
+    %    'window_method'     'connectedComponents' or 'slidingWindow' or 'integral' or
+    %                        'convolution' or 'mergeIntegral' (Weeks 3-5)
     %    'decision_method'   'GeometricHeuristics' or 'TemplateMatching' (Weeks 4-5)
 
     addpath('evaluation')
@@ -72,15 +73,15 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
         switch window_method
-            case 'Sliding window'
+            case 'slidingWindow'
                 windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
             case 'integral'
                 windowCandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
             case 'convolution'
                 windowCandidates = ConvCandidateGenerationWindow(im, pixelCandidates, window_method);
-            case 'merge integral'
+            case 'mergeIntegral'
                 windowCandidates = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
-            case 'connected components'
+            case 'connectedComponents'
                 windowCandidates = ConnectedComponents(pixelCandidates);
             otherwise
                 error('Incorrect window method defined');
