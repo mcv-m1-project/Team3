@@ -63,14 +63,20 @@ PerformanceAccumulationWindow(windowCandidates, windowAnnotations);
 ```
 Parameters:
 **windowCandidates:** detected windows
+
 **windowAnnotations:** ground truth annotated windows
+
 ```
 PerformanceEvaluationWindow(windowTP, windowFN, windowFP, windowTN);
 ```
 Parameters:
+
 **windowTP:** True positives acummulated value from previous PerformaneAccumulationWindow executions
+
 **windowFN:** False negatives acummulated value from previous PerformaneAccumulationWindow executions
+
 **windowFP:** False positives acummulated value from previous PerformaneAccumulationWindow executions
+
 **windowTN:** True negatives acummulated value from previous PerformaneAccumulationWindow executions
 
 
