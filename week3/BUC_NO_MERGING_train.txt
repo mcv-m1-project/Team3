@@ -1,0 +1,36 @@
+Training with 0.500000 1.000000 0.200000
+Precision: 0.422886, Accuracy: 0.575032, Specificity: 0.552124, Sensitivity (Recall): 0.618182, F1 score: 0.502216, TP: 170.000000, FP: 232.000000, FN: 105.000000 
+Filtered version:
+Precision: 0.437318, Accuracy: 0.546362, Specificity: 0.546948, Sensitivity (Recall): 0.545455, F1 score: 0.485437, TP: 150.000000, FP: 193.000000, FN: 125.000000 
+Training with 0.500000 1.000000 0.300000
+Precision: 0.416268, Accuracy: 0.577206, Specificity: 0.548983, Sensitivity (Recall): 0.632727, F1 score: 0.502165, TP: 174.000000, FP: 244.000000, FN: 101.000000 
+Filtered version:
+Precision: 0.428969, Accuracy: 0.549101, Specificity: 0.542411, Sensitivity (Recall): 0.560000, F1 score: 0.485804, TP: 154.000000, FP: 205.000000, FN: 121.000000 
+Training with 0.500000 1.000000 0.400000
+Precision: 0.413242, Accuracy: 0.584112, Specificity: 0.553819, Sensitivity (Recall): 0.646429, F1 score: 0.504178, TP: 181.000000, FP: 257.000000, FN: 99.000000 
+Filtered version:
+Precision: 0.415789, Accuracy: 0.557867, Specificity: 0.549696, Sensitivity (Recall): 0.572464, F1 score: 0.481707, TP: 158.000000, FP: 222.000000, FN: 118.000000 
+Training with 0.600000 1.000000 0.200000
+Precision: 0.480663, Accuracy: 0.584770, Specificity: 0.553444, Sensitivity (Recall): 0.632727, F1 score: 0.546311, TP: 174.000000, FP: 188.000000, FN: 101.000000 
+Filtered version:
+Precision: 0.490323, Accuracy: 0.548232, Specificity: 0.544669, Sensitivity (Recall): 0.552727, F1 score: 0.519658, TP: 152.000000, FP: 158.000000, FN: 123.000000 
+Training with 0.600000 1.000000 0.300000
+Precision: 0.473404, Accuracy: 0.590278, Specificity: 0.555056, Sensitivity (Recall): 0.647273, F1 score: 0.546851, TP: 178.000000, FP: 198.000000, FN: 97.000000 
+Filtered version:
+Precision: 0.480000, Accuracy: 0.556240, Specificity: 0.548128, Sensitivity (Recall): 0.567273, F1 score: 0.520000, TP: 156.000000, FP: 169.000000, FN: 119.000000 
+Training with 0.600000 1.000000 0.400000
+Precision: 0.464103, Accuracy: 0.591946, Specificity: 0.554371, Sensitivity (Recall): 0.655797, F1 score: 0.543544, TP: 181.000000, FP: 209.000000, FN: 95.000000 
+Filtered version:
+Precision: 0.473837, Accuracy: 0.567208, Specificity: 0.549751, Sensitivity (Recall): 0.592727, F1 score: 0.526656, TP: 163.000000, FP: 181.000000, FN: 112.000000 
+Training with 0.700000 1.000000 0.200000
+Precision: 0.532110, Accuracy: 0.591640, Specificity: 0.559078, Sensitivity (Recall): 0.632727, F1 score: 0.578073, TP: 174.000000, FP: 153.000000, FN: 101.000000 
+Filtered version:
+Precision: 0.530466, Accuracy: 0.544170, Specificity: 0.549828, Sensitivity (Recall): 0.538182, F1 score: 0.534296, TP: 148.000000, FP: 131.000000, FN: 127.000000 
+Training with 0.700000 1.000000 0.300000
+Precision: 0.519288, Accuracy: 0.593168, Specificity: 0.560976, Sensitivity (Recall): 0.636364, F1 score: 0.571895, TP: 175.000000, FP: 162.000000, FN: 100.000000 
+Filtered version:
+Precision: 0.517483, Accuracy: 0.544674, Specificity: 0.550489, Sensitivity (Recall): 0.538182, F1 score: 0.527629, TP: 148.000000, FP: 138.000000, FN: 127.000000 
+Training with 0.700000 1.000000 0.400000
+Precision: 0.514286, Accuracy: 0.598187, Specificity: 0.559585, Sensitivity (Recall): 0.652174, F1 score: 0.575080, TP: 180.000000, FP: 170.000000, FN: 96.000000 
+Filtered version:
+Precision: 0.504983, Accuracy: 0.549669, Specificity: 0.547112, Sensitivity (Recall): 0.552727, F1 score: 0.527778, TP: 152.000000, FP: 149.000000, FN: 123.000000 

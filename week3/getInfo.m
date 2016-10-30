@@ -1,4 +1,4 @@
-function [ output_args ] = task1( pathGt, pathMask )
+function [ output_args ] = getInfo( pathGt, pathMask )
 %TASK 1 - week 1. Dataset statistics
 %arguments:  pathGT: directory of the gt, i.e 'DataSetDelivered/train/gt/'
 %            pathMask: directory of the image masks , i.e 'DataSetDelivered/train/masks/'
@@ -73,6 +73,36 @@ function [ output_args ] = task1( pathGt, pathMask )
     end
     output_args = gtObjs;
     
+    histSize = hist(cell2mat(gtObjs(:,3)));
+    histWidth = hist(cell2mat(gtObjs(:,1)));
+    histHeigth = hist(cell2mat(gtObjs(:,2)));
+    histAspect = hist(cell2mat(gtObjs(:,4)));
+    histFilling = hist(cell2mat(gtObjs(:,6)));
+    
+    subplot(2,3,1);
+    hist(cell2mat(gtObjs(:,3)));
+    title('Size');
+    
+    subplot(2,3,2);
+    hist(cell2mat(gtObjs(:,1)));
+    title('Width');
+    
+    subplot(2,3,3);
+    hist(cell2mat(gtObjs(:,2)));
+    title('Height');
+    
+    subplot(2,3,4);
+    hist(cell2mat(gtObjs(:,4)));
+    title('Ascpet Ratio');
+    
+    subplot(2,3,5);
+    hist(cell2mat(gtObjs(:,6)));
+    title('Filling Ratio');
+    
+    
+    
+    
+    
 end
 
 
@@ -111,6 +141,8 @@ function [ output_args ] = getObjData(x1, y1, x2, y2, type, mask_img, name)
 
     output_args = [ width, height, size, formFactor, type, fillingRatio, name];
 end
+
+
 
 
 
