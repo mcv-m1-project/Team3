@@ -83,6 +83,8 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 windowCandidates = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
             case 'connectedComponents'
                 windowCandidates = ConnectedComponents(pixelCandidates);
+            case 'correlation'
+                windowCandidates = CorrCandidateGenerationWindow(im, pixelCandidates, window_method);
             otherwise
                 error('Incorrect window method defined');
                 return
@@ -92,18 +94,18 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
 
         % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         
-%         imshow(pixelCandidates)
-%         
-%         for a=1:size(windowAnnotations, 1)
-%             rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
-%         end 
-% 
-%         for a=1:size(windowCandidates, 1)
-%             rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
-%         end 
-%         
-%         waitforbuttonpress
-%         waitforbuttonpress
+        imshow(pixelCandidates)
+        
+        for a=1:size(windowAnnotations, 1)
+            rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
+        end 
+
+        for a=1:size(windowCandidates, 1)
+            rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
+        end 
+        
+        waitforbuttonpress;
+        waitforbuttonpress;
         
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -326,6 +328,17 @@ function [windowCandidates] = ConvCandidateGenerationWindow(im, pixelCandidates,
         windowCandidates = NonMaxS(windowCandidates, 0.2);
     end
     windowCandidates = NonMaxS(windowCandidates, 0.2);
+end
+
+function [windowCandidates] = CorrCandidateGenerationWindow(im, pixelCandidates, window_method)
+    sizes = [32 64];
+    windowCandidates = [];
+    im = rgb2gray(im);
+    templates = rgb2gray(imread('mask.png'));
+    templates = {templates; templates; templates; templates};
+    %for s=1:length(sizes)
+        windowCandidates = [windowCandidates; templateCorrelation(im, templates, 0.3)];
+    %end
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
