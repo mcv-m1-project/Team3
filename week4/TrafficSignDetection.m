@@ -343,6 +343,17 @@ function [windowCandidates] = CorrCandidateGenerationWindow(im, pixelCandidates,
     %end
 end
 
+function [windowCandidates] = SubsCandidateGenerationWindow(im, pixelCandidates, window_method)
+    sizes = [32 64];
+    windowCandidates = [];
+    im = rgb2gray(im);
+    templates = rgb2gray(imread('mask.png'));
+    templates = {templates; templates; templates; templates};
+    %for s=1:length(sizes)
+        windowCandidates = [windowCandidates; templateSubstraction(im, templates, 0.3)];
+    %end
+end
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Performance Evaluation
