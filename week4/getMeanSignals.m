@@ -1,5 +1,5 @@
 function [ means ]  = getMeanSignals(pathGt, pathImg, pathMask) 
-dataset = dataset2mat(pathGt, pathImg, pathMask);
+    dataset = dataset2mat(pathGt, pathImg, pathMask);
     
     classCircle = {};
     classSquare = {};
