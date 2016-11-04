@@ -376,9 +376,13 @@ function [windowCandidates] = MaskChamferGenerationWindow(pixelCandidates, mask_
 
     windowCandidates = [];
     scales = [0.4 0.6 0.8 1.0 1.2 1.4];
+    
+    edg = edge(pixelCandidates, 'Canny');
+    dist = bwdist(edg);
+    
     for s=1:size(scales,2)
         templates = {imresize(mask_templates{1}, scales(s)) imresize(mask_templates{2}, scales(s)) imresize(mask_templates{3}, scales(s)) imresize(mask_templates{4}, scales(s))}; 
-        windowCandidates = [windowCandidates; MaskChamferWCandidates(pixelCandidates, templates)];
+        windowCandidates = [windowCandidates; MaskChamferWCandidates(templates, dist)];
     end
     pick = min_nms(windowCandidates, 0.05);
     windowCandidates = windowCandidates(pick);

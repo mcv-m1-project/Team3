@@ -1,10 +1,6 @@
-function [ windowCandidates ] = MaskChamferWCandidates( pixel_candidates, templates)
+function [ windowCandidates ] = MaskChamferWCandidates( templates, dist)
 %MaskChamferWCandidates Summary of this function goes here
 %   Detailed explanation goes here
-
-    edg = edge(pixel_candidates, 'Canny', 0.1, 3);
-    %[imi, imj] = size(edg);
-    dist = bwdist(edg);
 
     windowCandidates = [];
 
