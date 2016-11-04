@@ -1,10 +1,11 @@
 function [pixelCandidates] = morf( pixelCandidates, element)
     
-    ee=strel('line',7,0);
+    global RESCALE;
+    ee=strel('line',7*RESCALE,0);
     pixelCandidates = imclose(pixelCandidates,ee);
-    ee=strel('line',7,60);
+    ee=strel('line',7*RESCALE,60);
     pixelCandidates = imclose(pixelCandidates,ee);
-    ee=strel('line',7,-60);
+    ee=strel('line',7*RESCALE,-60);
     pixelCandidates = imclose(pixelCandidates,ee);
 % 
 %     ee=strel('line', 20, 0);

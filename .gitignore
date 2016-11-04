@@ -3,4 +3,5 @@
 DataSetDelivered/
 *.asv
 *.mat
+!week4/mask_templates.mat
 SplitDataset/
