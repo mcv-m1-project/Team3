@@ -56,8 +56,15 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     nFiles = size(files, 1);
     disp(sprintf('%d images to evaluate', nFiles));
     
+    % Load mask templates
     load('mask_templates.mat');
+    
+    % Load grayscale templates for correlatino
+    load('grayscaleTemps.mat');
+    
     mask_templates = {imresize(mask_templates{1}, RESCALE) imresize(mask_templates{2}, RESCALE) imresize(mask_templates{3}, RESCALE) imresize(mask_templates{4}, RESCALE)}; 
+    
+    grayscaleTemps = {imresize(grayscaleTemps{1}, RESCALE) imresize(grayscaleTemps{2}, RESCALE) imresize(grayscaleTemps{3}, RESCALE) imresize(grayscaleTemps{4}, RESCALE)}; 
     
     tic
     
@@ -91,7 +98,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
             case 'connectedComponents'
                 windowCandidates = ConnectedComponents(pixelCandidates);
             case 'correlation'
-                windowCandidates = CorrCandidateGenerationWindow(im, pixelCandidates, window_method);
+                windowCandidates = CorrCandidateGenerationWindow(im, pixelCandidates, window_method, grayscaleTemps);
             case 'maskchamfer'
                 windowCandidates = MaskChamferGenerationWindow(pixelCandidates, mask_templates);
             otherwise
@@ -350,15 +357,16 @@ function [windowCandidates] = ConvCandidateGenerationWindow(im, pixelCandidates,
     windowCandidates = NonMaxS(windowCandidates, 0.2);
 end
 
-function [windowCandidates] = CorrCandidateGenerationWindow(im, pixelCandidates, window_method)
-    sizes = [32 64];
+function [windowCandidates] = CorrCandidateGenerationWindow(im, pixelCandidates, window_method, templates)
+    scales = [0.4 0.6 0.8 1.0 1.2 1.4];
     windowCandidates = [];
+    
     im = rgb2gray(im);
-    templates = rgb2gray(imread('mask.png'));
-    templates = {templates; templates; templates; templates};
-    %for s=1:length(sizes)
+
+    for s=1:size(scales,2)
+        templates = {imresize(mask_templates{1}, scales(s)) imresize(mask_templates{2}, scales(s)) imresize(mask_templates{3}, scales(s)) imresize(mask_templates{4}, scales(s))}; 
         windowCandidates = [windowCandidates; templateCorrelation(im, templates, 0.3)];
-    %end
+    end
 end
 
 function [windowCandidates] = SubsCandidateGenerationWindow(im, pixelCandidates, window_method)

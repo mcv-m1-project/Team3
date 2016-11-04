@@ -12,9 +12,9 @@ function [ windowCandidates ] = templateCorrelation( im, templates, thr )
     corr3 = normxcorr2(templates{3}, im);
     corr4 = normxcorr2(templates{4}, im);
     
-    imshow(corr1);
-    figure, surf(corr1), shading flat
-    waitforbuttonpress;
+    %imshow(corr1);
+    %figure, surf(corr1), shading flat
+    %waitforbuttonpress;
     
     isSign = (corr1 > thr) | (corr2 > thr) | (corr3 > thr) | (corr4 > thr); 
     
