@@ -13,7 +13,7 @@ function [ windowCandidates ] = MaskChamferWCandidates( templates, dist)
         template = flipud(fliplr(template));
         C = conv2(dist,template,'same');
 
-        [min_y, min_x] = find(C==min(C(:)));
+        [min_y, min_x] = find(C==min(C(:)), 1);
         Gmin = C(min_y, min_x);
 
         min_x = min_x - uint16(ti/2); %
