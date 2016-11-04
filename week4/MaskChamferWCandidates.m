@@ -1,12 +1,10 @@
-function [ windowCandidates ] = MaskChamferWCandidates( pixel_candidates )
+function [ windowCandidates ] = MaskChamferWCandidates( pixel_candidates, templates)
 %MaskChamferWCandidates Summary of this function goes here
 %   Detailed explanation goes here
 
     edg = edge(pixel_candidates, 'Canny', 0.1, 3);
     %[imi, imj] = size(edg);
     dist = bwdist(edg);
-
-    load('templates.mat');
 
     windowCandidates = [];
 
@@ -27,7 +25,12 @@ function [ windowCandidates ] = MaskChamferWCandidates( pixel_candidates )
         min_x = min_x - uint16(ti/2); %
         min_y = min_y - uint16(tj/2); %
 
-        windowCandidates = [windowCandidates; struct('x', min_x, 'y', min_y, 'w', ti, 'h', tj)];
-    end    
+        windowCandidates = [windowCandidates; struct('x', double(min_x), 'y', double(min_y), 'w', ti, 'h', tj, 'min', Gmin/(ti*tj))];
+    end
+    
+    % Store only the bbox with the lowest min -> the one which matches the
+    % best
+    pick = min_nms(windowCandidates, 0.2);
+    windowCandidates = windowCandidates(pick);
 end
 

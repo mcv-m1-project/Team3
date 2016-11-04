@@ -51,8 +51,13 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     
     files = ListFiles(directory);
     
+    global RESCALE;         RESCALE = 0.5;
+    
     nFiles = size(files, 1);
     disp(sprintf('%d images to evaluate', nFiles));
+    
+    load('mask_templates.mat');
+    mask_templates = {imresize(mask_templates{1}, RESCALE) imresize(mask_templates{2}, RESCALE) imresize(mask_templates{3}, RESCALE) imresize(mask_templates{4}, RESCALE)}; 
     
     tic
     
@@ -65,10 +70,12 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % Read file
         im = imread(strcat(directory,'/',files(i).name));
+        
+        im = imresize(im, RESCALE);
                     
         % Candidate Generation (pixel) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         pixelCandidates = CandidateGenerationPixel_Color(im, pixel_method);
-        element=strel('diamond',4);
+        element=strel('diamond',4*RESCALE);
         pixelCandidates = morf(pixelCandidates, element);
         
         % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
@@ -86,17 +93,26 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
             case 'correlation'
                 windowCandidates = CorrCandidateGenerationWindow(im, pixelCandidates, window_method);
             case 'maskchamfer'
-                windowCandidates = MaskChamferWCandidates(pixelCandidates);
+                windowCandidates = MaskChamferGenerationWindow(pixelCandidates, mask_templates);
             otherwise
                 error('Incorrect window method defined');
                 return
         end
         
+        % Because the image is resized, the window points shall be moved
+        for a=1:size(windowCandidates, 1)
+            windowCandidates(a).x = windowCandidates(a).x / RESCALE;
+            windowCandidates(a).y = windowCandidates(a).y / RESCALE;
+            windowCandidates(a).w = windowCandidates(a).w / RESCALE;
+            windowCandidates(a).h = windowCandidates(a).h / RESCALE;
+        end
+        
         windowAnnotations = LoadAnnotations(strcat(directory, '/gt/gt.', files(i).name(1:size(files(i).name,2)-3), 'txt'));   
-
+        
+        
         % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         
-        imshow(pixelCandidates)
+        imshow(imresize(pixelCandidates, 1/RESCALE))
         
         for a=1:size(windowAnnotations, 1)
             rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
@@ -113,7 +129,8 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % Accumulate pixel performance of the current image %%%%%%%%%%%%%%%%%
         pixelAnnotation = imread(strcat(directory, '/mask/mask.', files(i).name(1:size(files(i).name,2)-3), 'png'))>0;
-
+        pixelAnnotation = imresize(pixelAnnotation, RESCALE);
+        
         [localPixelTP, localPixelFP, localPixelFN, localPixelTN] = PerformanceAccumulationPixel(pixelCandidates, pixelAnnotation);
         pixelTP = pixelTP + localPixelTP;
         pixelFP = pixelFP + localPixelFP;
@@ -310,7 +327,8 @@ end
 
 function [windowCandidates] = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method)
     iImg = cumsum(cumsum(double(pixelCandidates)),2);
-    windowCandidates = IntegralSlidingWindow(iImg, 10, 40, 40, 0.6, 1);
+    global RESCALE;
+    windowCandidates = IntegralSlidingWindow(iImg, 10*RESCALE, 40*RESCALE, 40*RESCALE, 0.6, 1);
 
     new_windowCandidates = NonMaxS(windowCandidates, 0.3);
 
@@ -352,6 +370,21 @@ function [windowCandidates] = SubsCandidateGenerationWindow(im, pixelCandidates,
     %for s=1:length(sizes)
         windowCandidates = [windowCandidates; templateSubstraction(im, templates, 0.3)];
     %end
+end
+
+function [windowCandidates] = MaskChamferGenerationWindow(pixelCandidates, mask_templates)
+
+    windowCandidates = [];
+    tic
+    scales = [0.4 0.6 0.8 1.0 1.2 1.4];
+    for s=1:size(scales,2)
+        templates = {imresize(mask_templates{1}, scales(s)) imresize(mask_templates{2}, scales(s)) imresize(mask_templates{3}, scales(s)) imresize(mask_templates{4}, scales(s))}; 
+        size(templates{1})
+        windowCandidates = [windowCandidates; MaskChamferWCandidates(pixelCandidates, templates)];
+    end
+    pick = min_nms(windowCandidates, 0.05);
+    windowCandidates = windowCandidates(pick);
+    toc
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
