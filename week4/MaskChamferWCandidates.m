@@ -6,17 +6,15 @@ function [ windowCandidates ] = MaskChamferWCandidates( templates, dist)
 
     % For each template
     for t=1:size(templates, 2)
-        template = im2double(templates{t} > 0);
-        template = imdilate(template, ones(9,9)); % Dilate the template a little bit
+        template = double(templates{t} > 0);
+        %template = imdilate(template, ones(9,9)); % Dilate the template a little bit
         [ti, tj] = size(template);
 
         template = flipud(fliplr(template));
         C = conv2(dist,template,'same');
 
-        [ColumnMin, Y]= min(C);
-        [Gmin, X]= min(ColumnMin);
-        min_x = X;
-        min_y = Y(X);
+        [min_y, min_x] = find(C==min(C(:)));
+        Gmin = C(min_y, min_x);
 
         min_x = min_x - uint16(ti/2); %
         min_y = min_y - uint16(tj/2); %
