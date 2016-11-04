@@ -119,18 +119,18 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         
-%         imshow(imresize(pixelCandidates, 1/RESCALE))
-%         
-%         for a=1:size(windowAnnotations, 1)
-%             rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
-%         end 
-% 
-%         for a=1:size(windowCandidates, 1)
-%             rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
-%         end 
-%         
-%         waitforbuttonpress;
-%         waitforbuttonpress;
+        imshow(imresize(pixelCandidates, 1/RESCALE))
+        
+        for a=1:size(windowAnnotations, 1)
+            rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
+        end 
+
+        for a=1:size(windowCandidates, 1)
+            rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
+        end 
+        
+        waitforbuttonpress;
+        waitforbuttonpress;
         
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -360,12 +360,13 @@ end
 function [windowCandidates] = CorrCandidateGenerationWindow(im, pixelCandidates, window_method, templates)
     scales = [0.4 0.6 0.8 1.0 1.2 1.4];
     windowCandidates = [];
+    threshods = [0.6 0.6 0.6 0.6];
     
     im = rgb2gray(im);
 
     for s=1:size(scales,2)
-        templates = {imresize(mask_templates{1}, scales(s)) imresize(mask_templates{2}, scales(s)) imresize(mask_templates{3}, scales(s)) imresize(mask_templates{4}, scales(s))}; 
-        windowCandidates = [windowCandidates; templateCorrelation(im, templates, 0.3)];
+        templates = {imresize(templates{1}, scales(s)) imresize(templates{2}, scales(s)) imresize(templates{3}, scales(s)) imresize(templates{4}, scales(s))}; 
+        windowCandidates = [windowCandidates; templateCorrelation(im, templates, threshods)];
     end
 end
 
