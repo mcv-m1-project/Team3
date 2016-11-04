@@ -3,5 +3,7 @@
 DataSetDelivered/
 *.asv
 *.mat
+*.txt
 !week4/mask_templates.mat
 SplitDataset/
+*.m~
