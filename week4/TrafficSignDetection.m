@@ -85,6 +85,8 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 windowCandidates = ConnectedComponents(pixelCandidates);
             case 'correlation'
                 windowCandidates = CorrCandidateGenerationWindow(im, pixelCandidates, window_method);
+            case 'maskchamfer'
+                windowCandidates = MaskChamferWCandidates(pixelCandidates);
             otherwise
                 error('Incorrect window method defined');
                 return

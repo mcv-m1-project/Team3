@@ -1,6 +1,8 @@
 im = im2double(imread('cameraman.tif'));
 [ni, nj] = size(im);
-ker = im(100:140, 180:220);
+%ker = im(100:140, 180:220);
+ker = ones(41,41);
+ker(1,1) = 0;
 [ki, kj] = size(ker);
 r = normxcorr2(ker, im);
 [ri, rj] = size(r);
