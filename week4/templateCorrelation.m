@@ -7,6 +7,17 @@ function [ windowCandidates ] = templateCorrelation( im, templates, thr )
     [ni, nj] = size(im);
     [ki, kj] = size(templates{1});
     
+    imshow(im);
+    waitforbuttonpress;
+    imshow(templates{1});
+    waitforbuttonpress;
+    imshow(templates{2});
+    waitforbuttonpress;
+    imshow(templates{3});
+    waitforbuttonpress;
+    imshow(templates{4});
+    waitforbuttonpress;
+    
     % Compute the correlation for each template
     corr1 = normxcorr2(templates{1}, im);
     corr2 = normxcorr2(templates{2}, im);
@@ -16,34 +27,30 @@ function [ windowCandidates ] = templateCorrelation( im, templates, thr )
 %     imshow(templates{1});
 %     waitforbuttonpress;
     imshow(corr1);
-    [M,I] = max(corr1(:));
-    [I_row, I_col] = ind2sub(size(corr1),I);
+    [ypeak, xpeak] = find(corr1==max(corr1(:)));
     hold on
-    plot(I_row,I_col,'r.','MarkerSize',50);
+    plot(xpeak,ypeak,'r.','MarkerSize',50);
     waitforbuttonpress;
     
     hold off
     imshow(corr2);
-    [M,I] = max(corr2(:));
-    [I_row, I_col] = ind2sub(size(corr2),I);
+    [ypeak, xpeak] = find(corr2==max(corr2(:)));
     hold on
-    plot(I_row,I_col,'r.','MarkerSize',50);
+    plot(xpeak,ypeak,'r.','MarkerSize',50);
     waitforbuttonpress;
 
     hold off
     imshow(corr3);
-    [M,I] = max(corr3(:));
-    [I_row, I_col] = ind2sub(size(corr3),I);
+    [ypeak, xpeak] = find(corr3==max(corr3(:)));
     hold on
-    plot(I_row,I_col,'r.','MarkerSize',50);
+    plot(xpeak,ypeak,'r.','MarkerSize',50);
     waitforbuttonpress;
     
     hold off
     imshow(corr4);
-    [M,I] = max(corr4(:));
-    [I_row, I_col] = ind2sub(size(corr4),I);
+    [ypeak, xpeak] = find(corr4==max(corr4(:)));
     hold on
-    plot(I_row,I_col,'r.','MarkerSize',50);
+    plot(xpeak,ypeak,'r.','MarkerSize',50);
     waitforbuttonpress;
     hold off
 
