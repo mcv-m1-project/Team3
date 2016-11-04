@@ -105,6 +105,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 error('Incorrect window method defined');
                 return
         end
+        filtroResta(im, pixelCandidates, windowCandidates, grayscaleTemps);
         
         % Because the image is resized, the window points shall be moved
         for a=1:size(windowCandidates, 1)
