@@ -7,17 +7,20 @@ function [ filteredCandidates ] = filterCandidatesChamfer(  pixelCandidates, win
 
     for i=1:size(windowCandidates,1)
         wc = windowCandidates(i);
-        crop = im(wc.y:wc.y+wc.h,wc.x:wc.x+wc.w);
+        try
+            crop = im(wc.y:wc.y+wc.h,wc.x:wc.x+wc.w);
+        catch
+            continue
+        end
         dist = bwdist(crop);
         found = false;
         
         for j=1:size(templates,2)
-            tmpl = single(imresize(templates{j}, [size(crop,1) size(crop,2)]));
+            tmpl = imresize(templates{j}, size(crop));
+            tmpl = double(edge(tmpl, 'Canny'));
             
-            
-            mult = dist .* tmpl;
-            val = sum(sum(mult));
-            val = val/sum(size(mult));
+            val = sum(tmpl.*dist);
+            val = sum(val(:))/((size(dist, 1)*size(dist, 2)));
                         
             if(val < th ) 
                found = true; 
