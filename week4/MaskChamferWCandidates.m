@@ -13,13 +13,16 @@ function [ windowCandidates ] = MaskChamferWCandidates( templates, dist)
         template = flipud(fliplr(template));
         C = conv2(dist,template,'same');
 
-        [min_y, min_x] = find(C==min(C(:)), 1);
-        Gmin = C(min_y, min_x);
+        [coords_y, coords_x] = find((C./(ti*tj))<0.5); % Threshold found in findChamferTh.m
+        
+        for i=1:size(coords_y,1)
+            Gmin = C(coords_y(i), coords_x(i));
+%             Gmin/(ti*tj)
+            min_x = coords_x(i) - uint16(ti/2); %
+            min_y = coords_y(i) - uint16(tj/2); %
 
-        min_x = min_x - uint16(ti/2); %
-        min_y = min_y - uint16(tj/2); %
-
-        windowCandidates = [windowCandidates; struct('x', double(min_x), 'y', double(min_y), 'w', ti, 'h', tj, 'min', Gmin/(ti*tj))];
+            windowCandidates = [windowCandidates; struct('x', double(min_x), 'y', double(min_y), 'w', ti, 'h', tj, 'min', Gmin/(ti*tj))];
+        end
     end
     
     % Store only the bbox with the lowest min -> the one which matches the
