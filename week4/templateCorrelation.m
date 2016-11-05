@@ -1,4 +1,4 @@
-function [ windowCandidates ] = templateCorrelation( im, templates, thr )
+function [ windowCandidates ] = templateCorrelation( im, templates, thrs )
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
     global RESCALE;
@@ -7,94 +7,82 @@ function [ windowCandidates ] = templateCorrelation( im, templates, thr )
     [ni, nj] = size(im);
     [ki, kj] = size(templates{1});
     
-    imshow(im);
-    waitforbuttonpress;
-    imshow(templates{1});
-    waitforbuttonpress;
-    imshow(templates{2});
-    waitforbuttonpress;
-    imshow(templates{3});
-    waitforbuttonpress;
-    imshow(templates{4});
-    waitforbuttonpress;
-    
     % Compute the correlation for each template
     corr1 = normxcorr2(templates{1}, im);
     corr2 = normxcorr2(templates{2}, im);
     corr3 = normxcorr2(templates{3}, im);
     corr4 = normxcorr2(templates{4}, im);
     
-%     imshow(templates{1});
-%     waitforbuttonpress;
-    imshow(corr1);
-    [ypeak, xpeak] = find(corr1==max(corr1(:)));
-    hold on
-    plot(xpeak,ypeak,'r.','MarkerSize',50);
-    waitforbuttonpress;
-    
-    hold off
-    imshow(corr2);
-    [ypeak, xpeak] = find(corr2==max(corr2(:)));
-    hold on
-    plot(xpeak,ypeak,'r.','MarkerSize',50);
-    waitforbuttonpress;
-
-    hold off
-    imshow(corr3);
-    [ypeak, xpeak] = find(corr3==max(corr3(:)));
-    hold on
-    plot(xpeak,ypeak,'r.','MarkerSize',50);
-    waitforbuttonpress;
-    
-    hold off
-    imshow(corr4);
-    [ypeak, xpeak] = find(corr4==max(corr4(:)));
-    hold on
-    plot(xpeak,ypeak,'r.','MarkerSize',50);
-    waitforbuttonpress;
-    hold off
-
-    
-%     figure, surf(corr1), shading flat
-%     waitforbuttonpress;
-    
-    % Get central crop of the correlation
+     % Get central crop of the correlation
     i_dif = ceil(ki/2);
     j_dif = ceil(kj/2);
     corr1 = corr1(i_dif:ni+i_dif, j_dif:nj+j_dif);
+    corr2 = corr2(i_dif:ni+i_dif, j_dif:nj+j_dif);
+    corr3 = corr3(i_dif:ni+i_dif, j_dif:nj+j_dif);
+    corr4 = corr4(i_dif:ni+i_dif, j_dif:nj+j_dif);
     
-    [ColMax, Y]= max(corr1);
-    [RowMax, X]= max(ColMax);
-    max_x = X;
-    max_y = Y(X);
-
-    max_x = max_x - uint16(ki/2); % 100/2 = 50
-    max_y = max_y - uint16(kj/2); % 100/2 = 50
-    
-    %isSign = (corr1 > thr) | (corr2 > thr) | (corr3 > thr) | (corr4 > thr); 
-     
-
-    % get the BB original coordinates
-%     [rows cols] = find(isSign == 1);
-%     rows = rows - double(idivide(int32(ki), 2, 'ceil'));
-%     cols = cols - double(idivide(int32(kj), 2, 'ceil'));
+    % Filter the hight values of the correlation
+    ypeak = [];
+    xpeak = [];
+    [ypeakTemp, xpeakTemp] = find(corr1 > thrs(1));  %max(corr1(:)));    
+    % store the values on the output struct
+    xpeak = xpeakTemp - double(uint16(ki/2));
+    ypeak = ypeakTemp - double(uint16(kj/2));      
 
     % Convert to original coordinates
-    max_y = max_y / RESCALE;
-    max_x = max_x / RESCALE;
+    ypeak = ypeak / RESCALE;
+    xpeak = xpeak / RESCALE;
     ki = ki / RESCALE;
     kj = kj / RESCALE;
+    for i=1 : size(ypeakTemp);
+        windowCandidates = [windowCandidates; struct('x', double(xpeak(i)), 'y', double(ypeak(i)), 'w', ki, 'h', kj, 'max', corr1(ypeakTemp(i),xpeakTemp(i))/(ki*kj))];
+    end
+    
 
-    rows = num2cell(max_y);
-    cols = num2cell(max_x);
+    [ypeakTemp, xpeakTemp] = find(corr2 > thrs(2)); %max(corr2(:)));
+    % store the values on the output struct
+    xpeak = xpeakTemp - double(uint16(ki/2));
+    ypeak = ypeakTemp - double(uint16(kj/2));      
+
+    % Convert to original coordinates
+    ypeak = ypeak / RESCALE;
+    xpeak = xpeak / RESCALE;
+    ki = ki / RESCALE;
+    kj = kj / RESCALE;
+    for i=1 : size(ypeakTemp);
+        windowCandidates = [windowCandidates; struct('x', double(xpeak(i)), 'y', double(ypeak(i)), 'w', ki, 'h', kj, 'max', corr2(ypeakTemp(i),xpeakTemp(i))/(ki*kj))];
+    end
+
+    [ypeakTemp, xpeakTemp] = find(corr3 > thrs(3)); %max(corr3(:)));
+    % store the values on the output struct
+    xpeak = xpeakTemp - double(uint16(ki/2));
+    ypeak = ypeakTemp - double(uint16(kj/2));      
+
+    % Convert to original coordinates
+    ypeak = ypeak / RESCALE;
+    xpeak = xpeak / RESCALE;
+    ki = ki / RESCALE;
+    kj = kj / RESCALE;
+    for i=1 : size(ypeakTemp);
+        windowCandidates = [windowCandidates; struct('x', double(xpeak(i)), 'y', double(ypeak(i)), 'w', ki, 'h', kj, 'max', corr3(ypeakTemp(i),xpeakTemp(i))/(ki*kj))];
+    end
+
+    
+    [ypeakTemp, xpeakTemp] = find(corr4 > thrs(4)); %max(corr4(:)));
 
     % store the values on the output struct
-    [windowCandidates(1:length(rows)).x] = deal(cols{:});
-    [windowCandidates(1:length(rows)).y] = deal(rows{:});
-    [windowCandidates(1:length(rows)).w] = deal(ki); 
-    [windowCandidates(1:length(rows)).h] = deal(kj);
+    xpeak = xpeakTemp - double(uint16(ki/2));
+    ypeak = ypeakTemp - double(uint16(kj/2));      
 
-    windowCandidates = transpose(windowCandidates);
+    % Convert to original coordinates
+    ypeak = ypeak / RESCALE;
+    xpeak = xpeak / RESCALE;
+    ki = ki / RESCALE;
+    kj = kj / RESCALE;
+    %idx = sub2ind(size(corr4), ypeakTemp, xpeakTemp)
+    for i=1 : size(ypeakTemp,1);
+        windowCandidates = [windowCandidates; struct('x', double(xpeak(i)), 'y', double(ypeak(i)), 'w', ki, 'h', kj, 'max', corr4(ypeakTemp(i),xpeakTemp(i))/(ki*kj))];
+    end
 
 end
 
