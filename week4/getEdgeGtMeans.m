@@ -19,9 +19,9 @@ function [means] = getEdgeGtMeans( pathGt, pathImg, pathMask, method, color)
             fullIm = imread(dataset{i,1}{2}) > 0;
             im = fullIm(inix:endx, iniy:endy);
             im = imresize(im, [meanx, meany]);
-            %im = edgesDetection(im, method, color);
-            imshow(im);
-            pause(.0001);
+            im = edgesDetection(im, method, color);
+            %imshow(im);
+            %pause(.0001);
             
             switch dataset{i,1}{3}{j}{5}
                 case 'A' 
