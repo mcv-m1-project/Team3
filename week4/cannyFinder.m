@@ -31,7 +31,7 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
                     end
                 end
                 absDiff = sum(sum(absDiff))/count;
-                corrDif = sum(sum(corrDif))/count;
+                corrDiff = sum(sum(corrDiff))/count;
 
                 fprintf(file, 'th: [%f %f], sigma: %f, absDiff: %f, corrDiff: %f\n', th_low/20, th_high/20, sigma, absDiff, corrDiff);
             end
