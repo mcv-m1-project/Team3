@@ -62,6 +62,8 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     % Load grayscale templates for correlatino
     load('grayscaleTemps.mat');
     
+    mask_templates = {rgb2gray(imread('mask_templates/circle.png'))>0 rgb2gray(imread('mask_templates/square.png'))>0 rgb2gray(imread('mask_templates/triangle.png'))>0 rgb2gray(imread('mask_templates/triangle_down.png'))>0};
+    
     mask_templates = {imresize(mask_templates{1}, RESCALE) imresize(mask_templates{2}, RESCALE) imresize(mask_templates{3}, RESCALE) imresize(mask_templates{4}, RESCALE)}; 
     
     grayscaleTemps = {imresize(grayscaleTemps{1}, RESCALE) imresize(grayscaleTemps{2}, RESCALE) imresize(grayscaleTemps{3}, RESCALE) imresize(grayscaleTemps{4}, RESCALE)}; 
@@ -90,10 +92,12 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
             case 'integral'
                 windowCandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
+                windowCandidates = filterWindows(windowCandidates);
             case 'convolution'
                 windowCandidates = ConvCandidateGenerationWindow(im, pixelCandidates, window_method);
             case 'mergeIntegral'
                 windowCandidates = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
+                windowCandidates = filterWindows(windowCandidates);
             case 'connectedComponents'
                 windowCandidates = ConnectedComponents(pixelCandidates);
             case 'correlation'
@@ -116,22 +120,21 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         windowAnnotations = LoadAnnotations(strcat(directory, '/gt/gt.', files(i).name(1:size(files(i).name,2)-3), 'txt'));   
         
-        
         % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         
-%         imshow(imresize(pixelCandidates, 1/RESCALE))
-%         
-%         for a=1:size(windowAnnotations, 1)
-%             rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
-%         end 
-% 
-%         for a=1:size(windowCandidates, 1)
-%             rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
-%         end 
-%         
-%         waitforbuttonpress;
-%         waitforbuttonpress;
-%         
+        imshow(imresize(pixelCandidates, 1/RESCALE))
+        
+        for a=1:size(windowAnnotations, 1)
+            rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
+        end 
+
+        for a=1:size(windowCandidates, 1)
+            rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
+        end 
+
+        waitforbuttonpress;
+        waitforbuttonpress;
+        
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
         % Accumulate pixel performance of the current image %%%%%%%%%%%%%%%%%
@@ -323,10 +326,11 @@ end
 
 function [windowCandidates] = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method)
     iImg = cumsum(cumsum(double(pixelCandidates)),2);
-    sizes = [32 64];
+    global RESCALE;
+    sizes = [24*RESCALE 32*RESCALE 44*RESCALE 52*RESCALE 64*RESCALE 80*RESCALE 92*RESCALE 108*RESCALE 128*RESCALE 136*RESCALE];
     windowCandidates = [];
     for s=1:length(sizes)
-        windowCandidates = [ windowCandidates; IntegralSlidingWindow(iImg, 8, sizes(s), sizes(s), 0.5, 1) ];
+        windowCandidates = [ windowCandidates; IntegralSlidingWindow(iImg, sizes(s)/4, sizes(s), sizes(s), 0.5, 1) ];
         windowCandidates = NonMaxS(windowCandidates, 0.2);
     end
     windowCandidates = NonMaxS(windowCandidates, 0.2);
