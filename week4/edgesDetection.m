@@ -36,12 +36,13 @@ switch edges
     case 'gradeMagnitudRoberts'
         [BW,Gdir] = imgradient(I,'roberts');
     case 'gradeMagnitudMorpho'
-        ee=strel('diamond',2);
+        %ee=strel('diamond',2);
         %I=imopen(I,ee);   %contours not closed
         [Gx, Gy] = imgradientxy(I);
         [BW, Gdir] = imgradient(Gx, Gy);
-        BW = imclose(BW,ee); %remove noise
-        BW = bwmorph(BW,'remove'); %thinning
+        %BW = imclose(BW,ee); %remove noise
+        BW = bwmorph(BW,'thin'); %thinning
+        BW = xor(bwareaopen(I,200),  bwareaopen(I,1000));
     otherwise
         error('Edges detector method not valid.');
 end
