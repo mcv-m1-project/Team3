@@ -6,7 +6,7 @@ for i=1:size(in_windows,1)
     sizew = in_windows(i).w * in_windows(i).h;
     aspectRatio = in_windows(i).w / in_windows(i).h;
     
-    if(sizew < 56000 && sizew >  900 && aspectRatio > 0.7 && aspectRatio < 2.3)
+    if(sizew < 56000 && sizew >  300 && aspectRatio > 0.5 && aspectRatio < 1.5)
        out_windows = [out_windows; in_windows(i)]; 
     end
 end

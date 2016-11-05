@@ -92,10 +92,12 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
             case 'integral'
                 windowCandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
+                windowCandidates = filterWindows(windowCandidates);
             case 'convolution'
                 windowCandidates = ConvCandidateGenerationWindow(im, pixelCandidates, window_method);
             case 'mergeIntegral'
                 windowCandidates = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
+                windowCandidates = filterWindows(windowCandidates);
             case 'connectedComponents'
                 windowCandidates = ConnectedComponents(pixelCandidates);
             case 'correlation'
@@ -117,7 +119,6 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         windowAnnotations = LoadAnnotations(strcat(directory, '/gt/gt.', files(i).name(1:size(files(i).name,2)-3), 'txt'));   
         
-        
         % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         
         imshow(imresize(pixelCandidates, 1/RESCALE))
@@ -129,7 +130,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         for a=1:size(windowCandidates, 1)
             rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
         end 
-        
+
         waitforbuttonpress;
         waitforbuttonpress;
         
