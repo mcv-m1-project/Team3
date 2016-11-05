@@ -7,7 +7,7 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
     f = dir(path_img);
     finalCandidates = [];
     
-    for th_low=0:10
+    for th_low=0:19
         for th_high=th_low+1:20
             for sigma=1:10
                 absDiff = 0;
