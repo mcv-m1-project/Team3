@@ -106,6 +106,8 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 windowCandidates = SubsCandidateGenerationWindow(im, pixelCandidates, window_method, grayscaleTemps);
             case 'maskchamfer'
                 windowCandidates = MaskChamferGenerationWindow(pixelCandidates, mask_templates);
+            case 'none'
+                
             otherwise
                 error('Incorrect window method defined');
                 return
@@ -119,7 +121,18 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
             case 'chamfer'
                 windowCandidates = filterCandidatesChamfer(pixelCandidates, windowCandidates, mask_templates, 0.2);
             case 'none'
-           
+                
+            case 'CC'
+                im2=im;
+                im2=rgb2hsv(im2);imSat = im2;
+                imSat(:,:,2) = double(im2(:,:,2)*2);
+                imLum = imSat;
+                imLum(:,:,3) = double(imSat(:,:,3)*2);
+                BW=edgesDetection(imLum, 'gradeMagnitudMorpho', 'bwOtsu');
+                load('mask_templates.mat');
+                templates=mask_templates;
+                windowCandidates =CCchamferTemplateMatching(BW,templates);
+                [ pixelCandidates ] = copyPixelsFromWindows(windowCandidates,BW);
             otherwise
                 error('Incorrect decision method defined');
                 return
@@ -137,18 +150,18 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         
-%         imshow(imresize(pixelCandidates, 1/RESCALE))
-%         
-%         for a=1:size(windowAnnotations, 1)
-%             rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
-%         end 
-% 
-%         for a=1:size(windowCandidates, 1)
-%             rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
-%         end 
-% 
-%         waitforbuttonpress;
-%         waitforbuttonpress;
+        imshow(imresize(pixelCandidates, 1/RESCALE))
+        
+        for a=1:size(windowAnnotations, 1)
+            rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
+        end 
+
+        for a=1:size(windowCandidates, 1)
+            rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
+        end 
+
+        waitforbuttonpress;
+        waitforbuttonpress;
         
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
