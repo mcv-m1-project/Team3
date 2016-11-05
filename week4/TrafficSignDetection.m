@@ -102,6 +102,8 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 windowCandidates = ConnectedComponents(pixelCandidates);
             case 'correlation'
                 windowCandidates = CorrCandidateGenerationWindow(im, pixelCandidates, window_method, grayscaleTemps);
+            case 'subtraction'
+                windowCandidates = SubsCandidateGenerationWindow(im, pixelCandidates, window_method, grayscaleTemps);
             case 'maskchamfer'
                 windowCandidates = MaskChamferGenerationWindow(pixelCandidates, mask_templates);
             otherwise
@@ -377,7 +379,7 @@ end
 function [windowCandidates] = CorrCandidateGenerationWindow(im, pixelCandidates, window_method, templates)
     scales = [0.4 0.6]; %0.8 1.0 1.2 1.4];
     windowCandidates = [];
-    threshods = [0.7 0.7 0.7 0.7];
+    threshods = [0.68 0.88 0.44 0.43];
     
     im = rgb2gray(im);
 
@@ -389,15 +391,19 @@ function [windowCandidates] = CorrCandidateGenerationWindow(im, pixelCandidates,
     windowCandidates = windowCandidates(pick);
 end
 
-function [windowCandidates] = SubsCandidateGenerationWindow(im, pixelCandidates, window_method)
-    sizes = [32 64];
+function [windowCandidates] = SubsCandidateGenerationWindow(im, pixelCandidates, window_method, templates )
+    scales = [0.4 0.6]; %0.8 1.0 1.2 1.4];
     windowCandidates = [];
+    threshods = [0.68 0.88 0.44 0.43];
+    
     im = rgb2gray(im);
-    templates = rgb2gray(imread('mask.png'));
-    templates = {templates; templates; templates; templates};
-    %for s=1:length(sizes)
-        windowCandidates = [windowCandidates; templateSubstraction(im, templates, 0.3)];
-    %end
+    
+    for s=1:size(scales,2)
+        templates = {imresize(templates{1}, scales(s)) imresize(templates{2}, scales(s)) imresize(templates{3}, scales(s)) imresize(templates{4}, scales(s))}; 
+        windowCandidates = [windowCandidates; templateSubstraction(im, templates, threshods)];
+    end
+    pick = min_nms(windowCandidates, 0.05);
+    windowCandidates = windowCandidates(pick);
 end
 
 function [windowCandidates] = MaskChamferGenerationWindow(pixelCandidates, mask_templates)
