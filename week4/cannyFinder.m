@@ -7,8 +7,8 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
     f = dir(path_img);
     finalCandidates = [];
     
-    for th_low=0:19
-        for th_high=th_low+1:20
+    for th_low=0:9
+        for th_high=th_low+1:10
             for sigma=1:10
                 absDiff = 0;
                 corrDiff = 0;
@@ -33,7 +33,7 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
                 absDiff = sum(sum(absDiff))/count;
                 corrDiff = sum(sum(corrDiff))/count;
 
-                fprintf(file, 'Canny: th: [%f %f], sigma: sqrt(%f), absDiff: %f, corrDiff: %f\n', th_low/20, th_high/20, sigma, absDiff, corrDiff);
+                fprintf(file, 'Canny: th: [%f %f], sigma: sqrt(%f), absDiff: %f, corrDiff: %f\n', th_low/10, th_high/10, sigma, absDiff, corrDiff);
             end
         end
     end
@@ -125,8 +125,8 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
         fprintf(file, 'Roberts: th: %f, absDiff: %f, corrDiff: %f\n', th_low/10, absDiff, corrDiff);
     end
     
-    for th_low=0:19
-        for th_high=th_low+1:20
+    for th_low=0:9
+        for th_high=th_low+1:10
             for sigma=1:10
                 absDiff = 0;
                 corrDiff = 0;
@@ -151,7 +151,7 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
                 absDiff = sum(sum(absDiff))/count;
                 corrDiff = sum(sum(corrDiff))/count;
 
-                fprintf(file, 'Log: th: [%f %f], sigma: sqrt(%f), absDiff: %f, corrDiff: %f\n', th_low/20, th_high/20, sigma, absDiff, corrDiff);
+                fprintf(file, 'Log: th: [%f %f], sigma: sqrt(%f), absDiff: %f, corrDiff: %f\n', th_low/10, th_high/10, sigma, absDiff, corrDiff);
             end
         end
     end
