@@ -108,7 +108,8 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 error('Incorrect window method defined');
                 return
         end
-        %windowCandidates = filterCancidatesDifference(im, windowCandidates, grayscaleTemps, 0.2);
+
+        %windowCandidates = filterCandidatesDifference(im, windowCandidates, grayscaleTemps, 0.2);
         %windowCandidates = filterCandidatesConvolution(pixelCandidates, windowCandidates, mask_templates, 0.02);
         %windowCandidates = filterCandidatesChamfer(pixelCandidates, windowCandidates, mask_templates, 0.2);
         
