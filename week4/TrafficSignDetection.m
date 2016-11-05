@@ -62,6 +62,8 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     % Load grayscale templates for correlatino
     load('grayscaleTemps.mat');
     
+    mask_templates = {rgb2gray(imread('mask_templates/circle.png'))>0 rgb2gray(imread('mask_templates/square.png'))>0 rgb2gray(imread('mask_templates/triangle.png'))>0 rgb2gray(imread('mask_templates/triangle_down.png'))>0};
+    
     mask_templates = {imresize(mask_templates{1}, RESCALE) imresize(mask_templates{2}, RESCALE) imresize(mask_templates{3}, RESCALE) imresize(mask_templates{4}, RESCALE)}; 
     
     grayscaleTemps = {imresize(grayscaleTemps{1}, RESCALE) imresize(grayscaleTemps{2}, RESCALE) imresize(grayscaleTemps{3}, RESCALE) imresize(grayscaleTemps{4}, RESCALE)}; 
@@ -118,18 +120,18 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         
-%         imshow(imresize(pixelCandidates, 1/RESCALE))
-%         
-%         for a=1:size(windowAnnotations, 1)
-%             rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
-%         end 
-% 
-%         for a=1:size(windowCandidates, 1)
-%             rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
-%         end 
-%         
-%         waitforbuttonpress;
-%         waitforbuttonpress;
+        imshow(imresize(pixelCandidates, 1/RESCALE))
+        
+        for a=1:size(windowAnnotations, 1)
+            rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
+        end 
+
+        for a=1:size(windowCandidates, 1)
+            rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
+        end 
+        
+        waitforbuttonpress;
+        waitforbuttonpress;
         
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
