@@ -1,4 +1,4 @@
-function [recorte, imMargenes]= imageCrop(BW)
+function [recorte, imMargenes,x,y,w,h]= imageCrop(BW)
 
 
 % BW = BW(:,:,1);
@@ -53,28 +53,28 @@ verPro=sum(BW,1);
 
 primero=0;
 segundo=0;
-pr=99999;
-se=99999;
+pri=99999;
+seg=99999;
 for i=1:size(verPro,2)
     if (verPro(i)~=0 & primero==0)
-        pr=i-1;
+        pri=i-1;
         primero=1;
     end
     if (verPro(i)==0 & segundo==0 & primero==1)
-        se=i;
+        seg=i;
         segundo=1;
     elseif(segundo==1 & verPro(i)~=0)
         segundo=0;
-         se=99999;
+         seg=99999;
     end
 end
-if pr == 0
-    pr=1;
+if pri == 0
+    pri=1;
 end
-if se==99999
-    se=N;
+if seg==99999
+    seg=N;
 end
-recorte=imcrop(BW,[pr,1,se-pr,M]);
+recorte=imcrop(BW,[pri,1,seg-pri,M]);
 
 %Añadimos margenes para imagen cuadrada
 
@@ -92,5 +92,8 @@ elseif N==M
 end
 
 %imshow(recorte)
-
+x=pri; 
+y=pr;
+w=(seg-pri);
+h=(se-pr);
 

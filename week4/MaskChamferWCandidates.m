@@ -6,8 +6,8 @@ function [ windowCandidates ] = MaskChamferWCandidates( templates, dist)
 
     % For each template
     for t=1:size(templates, 2)
-        template = double(templates{t} > 0);
-        %template = imdilate(template, ones(9,9)); % Dilate the template a little bit
+        template = double(templates{t});
+        template = double(edge(template, 'Canny'));
         [ti, tj] = size(template);
 
         template = flipud(fliplr(template));
