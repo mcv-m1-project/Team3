@@ -51,7 +51,6 @@ function [means] = getEdgeGtMeans( pathGt, pathImg, pathMask, method, color)
         for j=2:size(groups{i},1)-1
             avg = avg + uint16(groups{i}{j});
         end
-        %means{i} =  (avg./size(groups{i},1));
         means{i} = (double(avg)./double(max(max(avg))));
     end
 end

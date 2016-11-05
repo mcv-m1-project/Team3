@@ -29,6 +29,7 @@ function [ means ]  = getMeanSignals(pathGt, pathImg, pathMask)
                     classCircle{end+1,1} = im;
                 case 'D' 
                     classCircle{end+1,1} = im;
+                    classCircle{1} = im;
                 case 'E' 
                     classCircle{end+1,1} = im;
                 case 'F' 
