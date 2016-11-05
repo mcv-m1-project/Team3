@@ -137,18 +137,18 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         
-        imshow(imresize(pixelCandidates, 1/RESCALE))
-        
-        for a=1:size(windowAnnotations, 1)
-            rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
-        end 
-
-        for a=1:size(windowCandidates, 1)
-            rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
-        end 
-
-        waitforbuttonpress;
-        waitforbuttonpress;
+%         imshow(imresize(pixelCandidates, 1/RESCALE))
+%         
+%         for a=1:size(windowAnnotations, 1)
+%             rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
+%         end 
+% 
+%         for a=1:size(windowCandidates, 1)
+%             rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
+%         end 
+% 
+%         waitforbuttonpress;
+%         waitforbuttonpress;
         
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -377,9 +377,9 @@ function [windowCandidates] = ConvCandidateGenerationWindow(im, pixelCandidates,
 end
 
 function [windowCandidates] = CorrCandidateGenerationWindow(im, pixelCandidates, window_method, templates)
-    scales = [0.4 0.6]; %0.8 1.0 1.2 1.4];
+    scales = [0.6]; %0.8 1.0 1.2 1.4];
     windowCandidates = [];
-    threshods = [0.68 0.88 0.44 0.43];
+    threshods = [0.7 0.7 0.7 0.7];
     
     im = rgb2gray(im);
 
