@@ -109,7 +109,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 return
         end
         %windowCandidates = filterCandidatesDifference(im, windowCandidates, grayscaleTemps, 0.2);
-        windowCandidates = filterCandidatesConvolution(pixelCandidates, windowCandidates, mask_templates, 0.02);
+        %windowCandidates = filterCandidatesConvolution(pixelCandidates, windowCandidates, mask_templates, 0.02);
         %windowCandidates = filterCandidatesChamfer(pixelCandidates, windowCandidates, mask_templates, 0.2);
         
         
