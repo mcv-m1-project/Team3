@@ -108,12 +108,21 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 error('Incorrect window method defined');
                 return
         end
+        
+        switch decision_method
+            case 'difference'
+                windowCandidates = filterCandidatesDifference(im, windowCandidates, grayscaleTemps, 0.2);
+            case 'convolution'
+                windowCandidates = filterCandidatesConvolution(pixelCandidates, windowCandidates, mask_templates, 0.02);
+            case 'chamfer'
+                windowCandidates = filterCandidatesChamfer(pixelCandidates, windowCandidates, mask_templates, 0.2);
+            case 'none'
+           
+            otherwise
+                error('Incorrect decision method defined');
+                return
+        end
 
-        %windowCandidates = filterCandidatesDifference(im, windowCandidates, grayscaleTemps, 0.2);
-        %windowCandidates = filterCandidatesConvolution(pixelCandidates, windowCandidates, mask_templates, 0.02);
-        %windowCandidates = filterCandidatesChamfer(pixelCandidates, windowCandidates, mask_templates, 0.2);
-        
-        
         % Because the image is resized, the window points shall be moved
         for a=1:size(windowCandidates, 1)
             windowCandidates(a).x = windowCandidates(a).x / RESCALE;
@@ -126,18 +135,18 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         
-%         imshow(imresize(pixelCandidates, 1/RESCALE))
-%         
-%         for a=1:size(windowAnnotations, 1)
-%             rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
-%         end 
-% 
-%         for a=1:size(windowCandidates, 1)
-%             rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
-%         end 
-% 
-%         waitforbuttonpress;
-%         waitforbuttonpress;
+        imshow(imresize(pixelCandidates, 1/RESCALE))
+        
+        for a=1:size(windowAnnotations, 1)
+            rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
+        end 
+
+        for a=1:size(windowCandidates, 1)
+            rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
+        end 
+
+        waitforbuttonpress;
+        waitforbuttonpress;
         
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -366,9 +375,9 @@ function [windowCandidates] = ConvCandidateGenerationWindow(im, pixelCandidates,
 end
 
 function [windowCandidates] = CorrCandidateGenerationWindow(im, pixelCandidates, window_method, templates)
-    scales = [0.4 0.6 0.8 1.0 1.2 1.4];
+    scales = [0.4 0.6]; %0.8 1.0 1.2 1.4];
     windowCandidates = [];
-    threshods = [0.6 0.6 0.6 0.6];
+    threshods = [0.7 0.7 0.7 0.7];
     
     im = rgb2gray(im);
 
@@ -376,6 +385,8 @@ function [windowCandidates] = CorrCandidateGenerationWindow(im, pixelCandidates,
         templates = {imresize(templates{1}, scales(s)) imresize(templates{2}, scales(s)) imresize(templates{3}, scales(s)) imresize(templates{4}, scales(s))}; 
         windowCandidates = [windowCandidates; templateCorrelation(im, templates, threshods)];
     end
+    pick = max_nms(windowCandidates, 0.05);
+    windowCandidates = windowCandidates(pick);
 end
 
 function [windowCandidates] = SubsCandidateGenerationWindow(im, pixelCandidates, window_method)
