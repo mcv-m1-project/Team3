@@ -23,8 +23,8 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
 
                             im = edge(mask, 'Canny', [th_low/20 th_high/20], sqrt(sigma));
 
-                            absDiff = absDiff + imabsdiff(mask, im);
-                            corrDiff = corrDiff + (mask .* im);
+                            absDiff = absDiff + (imabsdiff(mask, im) / (size(mask,1)*(size(mask,2))));
+                            corrDiff = corrDiff + ((mask .* im) / (size(mask,1)*(size(mask,2))));
                             count = count+1;
                         end
 
@@ -33,7 +33,7 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
                 absDiff = sum(sum(absDiff))/count;
                 corrDiff = sum(sum(corrDiff))/count;
 
-                fprintf(file, 'th: [%f %f], sigma: %f, absDiff: %f, corrDiff: %f\n', th_low/20, th_high/20, sigma, absDiff, corrDiff);
+                fprintf(file, 'th: [%f %f], sigma: sqrt(%f), absDiff: %f, corrDiff: %f\n', th_low/20, th_high/20, sigma, absDiff, corrDiff);
             end
         end
     end
