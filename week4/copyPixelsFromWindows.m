@@ -5,7 +5,11 @@ function [ pixelCandidates ] = copyPixelsFromWindows(windows,imagen)
         y1=windows(i).y;
         x2=windows(i).x+windows(i).w;
         y2=windows(i).y+windows(i).h;
-        pixelCandidates(y1:y2,x1:x2)=imagen(y1:y2,x1:x2);
+        try
+            pixelCandidates(y1:y2,x1:x2)=imagen(y1:y2,x1:x2);
+        catch % If the bbox is outside the image
+            continue
+        end
     end
 end
 

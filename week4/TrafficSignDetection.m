@@ -92,12 +92,10 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
             case 'integral'
                 windowCandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
-                windowCandidates = filterWindows(windowCandidates);
             case 'convolution'
                 windowCandidates = ConvCandidateGenerationWindow(im, pixelCandidates, window_method);
             case 'mergeIntegral'
                 windowCandidates = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
-                windowCandidates = filterWindows(windowCandidates);
             case 'connectedComponents'
                 windowCandidates = ConnectedComponents(pixelCandidates);
             case 'correlation'
@@ -119,9 +117,11 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
             case 'convolution'
                 windowCandidates = filterCandidatesConvolution(pixelCandidates, windowCandidates, mask_templates, 0.02);
             case 'chamfer'
-                windowCandidates = filterCandidatesChamfer(pixelCandidates, windowCandidates, mask_templates, 0.2);
+                windowCandidates = filterCandidatesChamfer(pixelCandidates, windowCandidates, mask_templates, 0.45);
             case 'none'
                 
+            case 'filterWindows'
+                windowCandidates = filterWindows(windowCandidates);
             case 'CC'
                 im2=im;
                 im2=rgb2hsv(im2);imSat = im2;
@@ -137,6 +137,10 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 error('Incorrect decision method defined');
                 return
         end
+        
+        % In order to compute pixel based metrics, we have to use only the
+        % pixels inside the windows found.
+        [ pixelCandidates ] = copyPixelsFromWindows(windowCandidates,pixelCandidates);
 
         % Because the image is resized, the window points shall be moved
         for a=1:size(windowCandidates, 1)
@@ -150,18 +154,18 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         
-        imshow(imresize(pixelCandidates, 1/RESCALE))
-        
-        for a=1:size(windowAnnotations, 1)
-            rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
-        end 
-
-        for a=1:size(windowCandidates, 1)
-            rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
-        end 
-
-        waitforbuttonpress;
-        waitforbuttonpress;
+%         imshow(imresize(pixelCandidates, 1/RESCALE))
+%         
+%         for a=1:size(windowAnnotations, 1)
+%             rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
+%         end 
+% 
+%         for a=1:size(windowCandidates, 1)
+%             rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
+%         end 
+% 
+%         waitforbuttonpress;
+%         waitforbuttonpress;
         
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -359,9 +363,9 @@ function [windowCandidates] = IntegralCandidateGenerationWindow(im, pixelCandida
     windowCandidates = [];
     for s=1:length(sizes)
         windowCandidates = [ windowCandidates; IntegralSlidingWindow(iImg, sizes(s)/4, sizes(s), sizes(s), 0.5, 1) ];
-        windowCandidates = NonMaxS(windowCandidates, 0.2);
+        windowCandidates = NonMaxS(windowCandidates, 0.2, 'mean');
     end
-    windowCandidates = NonMaxS(windowCandidates, 0.2);
+    windowCandidates = NonMaxS(windowCandidates, 0.2, 'mean');
 end
 
 function [windowCandidates] = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method)
@@ -369,11 +373,11 @@ function [windowCandidates] = MergeIntegralCandidateGenerationWindow(im, pixelCa
     global RESCALE;
     windowCandidates = IntegralSlidingWindow(iImg, 10*RESCALE, 40*RESCALE, 40*RESCALE, 0.6, 1);
 
-    new_windowCandidates = NonMaxS(windowCandidates, 0.3);
+    new_windowCandidates = NonMaxS(windowCandidates, 0.3, 'merge');
 
     while length(new_windowCandidates) ~= length(windowCandidates)
         windowCandidates = new_windowCandidates;
-        new_windowCandidates = NonMaxS(windowCandidates, 0.3);
+        new_windowCandidates = NonMaxS(windowCandidates, 0.3, 'merge');
     end
     windowCandidates = new_windowCandidates;
     
