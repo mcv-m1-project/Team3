@@ -50,6 +50,12 @@ function TrafficSignDetection_test(input_dir, output_dir, pixel_method, window_m
     
     mask_templates = {rgb2gray(imread('mask_templates/circle.png'))>0 rgb2gray(imread('mask_templates/square.png'))>0 rgb2gray(imread('mask_templates/triangle.png'))>0 rgb2gray(imread('mask_templates/triangle_down.png'))>0};
 
+    % Load grayscale templates for correlatino
+    load('grayscaleTemps.mat');
+    
+    grayscaleTemps = {imresize(grayscaleTemps{1}, RESCALE) imresize(grayscaleTemps{2}, RESCALE) imresize(grayscaleTemps{3}, RESCALE) imresize(grayscaleTemps{4}, RESCALE)}; 
+
+    
     mkdir(strcat(output_dir, '/test/'));
     
     for ii=1:size(files,1),
@@ -95,6 +101,8 @@ function TrafficSignDetection_test(input_dir, output_dir, pixel_method, window_m
         switch decision_method
             case 'difference'
                 windowCandidates = filterCandidatesDifference(im, windowCandidates, grayscaleTemps, 0.2);
+            case 'correlation'
+                windowCandidates = filterCandidatesCorr(im, windowCandidates, grayscaleTemps, 0.7);
             case 'convolution'
                 windowCandidates = filterCandidatesConvolution(pixelCandidates, windowCandidates, mask_templates, 0.02);
             case 'chamfer'
@@ -138,7 +146,7 @@ function TrafficSignDetection_test(input_dir, output_dir, pixel_method, window_m
         
 
         out_file1 = sprintf ('%s/test/pixelCandidates_%06d.png',  output_dir, ii);
-	    out_file2 = sprintf ('%s/test/windowCandidates_%06d.mat', output_dir, ii);
+	    out_file2 = sprintf ('%s/test/pixelCandidates_%06d.mat', output_dir, ii);
 
 	    imwrite (pixelCandidates, out_file1);
 	    save (out_file2, 'windowCandidates');        
@@ -345,6 +353,8 @@ function [windowCandidates] = SubsCandidateGenerationWindow(im, pixelCandidates,
     pick = min_nms(windowCandidates, 0.05);
     windowCandidates = windowCandidates(pick);
 end
+
+
 
 function [windowCandidates] = MaskChamferGenerationWindow(pixelCandidates, mask_templates)
 
