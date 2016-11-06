@@ -9,7 +9,6 @@ function findCorrelationTh( directory )
     load('grayscaleTemps.mat');
     
     mask_templates = grayscaleTemps;
-    %mask_templates = {rgb2gray(imread('mask_templates/circle.png'))>0 rgb2gray(imread('mask_templates/square.png'))>0 rgb2gray(imread('mask_templates/triangle.png'))>0 rgb2gray(imread('mask_templates/triangle_down.png'))>0};
 
     results1 = [];
     results2 = [];
@@ -36,13 +35,7 @@ function findCorrelationTh( directory )
             win_j = int16(windowAnnotations(a).x-2);                win_j = max(1, win_j);
             win_j_end = win_j + int16(windowAnnotations(a).w+4);    win_j_end = min(win_j_end, size(pixelAnnotation, 2));
             
-            try
-                window = im2double( im(win_i:win_i_end, int16(win_j:win_j_end)) );
-            catch
-                a = 1
-            end
-            %edg = edge(window, 'Canny');
-            %dist = bwdist(edg);
+            window = im2double( im(win_i:win_i_end, int16(win_j:win_j_end)) );
             
             switch signals{a}
                 case 'A' % up triangle
@@ -50,42 +43,48 @@ function findCorrelationTh( directory )
                     template = imresize(template, size(window));
                     result3 = template.*window;
                     result3 = sum(result3(:));
-                    result3 = result3 / (size(window,1)*size(window,2));
+                    maxCorr = sum( sum ( (template .* template) ) );
+                    result3 = result3 / maxCorr; %(size(window,1)*size(window,2));
                     results3 = [results3; result3];
                 case 'B' % down triangle
                     template = double(mask_templates{4}>0);
                     template = imresize(template, size(window));
                     result4 = template.*window;
                     result4 = sum(result4(:));
-                    result4 = result4 / (size(window,1)*size(window,2));
+                    maxCorr = sum( sum ( (template .* template) ) );
+                    result4 = result4 / maxCorr; %(size(window,1)*size(window,2));
                     results4 = [results4; result4];
                 case 'C' % circle
                     template = double(mask_templates{1}>0);
                     template = imresize(template, size(window));
                     result1 = template.*window;
                     result1 = sum(result1(:));
-                    result1 = result1 / (size(window,1)*size(window,2));
+                    maxCorr = sum( sum ( (template .* template) ) );
+                    result1 = result1 / maxCorr; %(size(window,1)*size(window,2));
                     results1 = [results1; result1];
                 case 'D' % circle
                     template = double(mask_templates{1}>0);
                     template = imresize(template, size(window));
                     result1 = template.*window;
                     result1 = sum(result1(:));
-                    result1 = result1 / (size(window,1)*size(window,2));
+                    maxCorr = sum( sum ( (template .* template) ) );
+                    result1 = result1 / maxCorr; %(size(window,1)*size(window,2));
                     results1 = [results1; result1];
                 case 'E' % circle
                     template = double(mask_templates{1}>0);
                     template = imresize(template, size(window));
                     result1 = template.*window;
                     result1 = sum(result1(:));
-                    result1 = result1 / (size(window,1)*size(window,2));
+                    maxCorr = sum( sum ( (template .* template) ) );
+                    result1 = result1 / maxCorr; %(size(window,1)*size(window,2));
                     results1 = [results1; result1];
                 case 'F' % square
                     template = double(mask_templates{2}>0);
                     template = imresize(template, size(window));
                     result2 = template.*window;
                     result2 = sum(result2(:));
-                    result2 = result2 / (size(window,1)*size(window,2));
+                    maxCorr = sum( sum ( (template .* template) ) );
+                    result2 = result2 / maxCorr; %(size(window,1)*size(window,2));
                     results2 = [results2; result2];
             end
             

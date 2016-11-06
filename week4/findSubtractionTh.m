@@ -46,42 +46,42 @@ files = ListFiles(directory);
                     template = imresize(template, size(window));
                     result3 = imabsdiff(template, window);
                     result3 = sum(result3(:));
-                    result3 = result3 / (size(window,1)*size(window,2));
+                    result3 = result3 / (size(window,1)*size(window,2)*255);
                     results3 = [results3; result3];
                 case 'B' % down triangle
                     template = double(mask_templates{4}>0);
                     template = imresize(template, size(window));
                     result4 = imabsdiff(template, window);
                     result4 = sum(result4(:));
-                    result4 = result4 / (size(window,1)*size(window,2));
+                    result4 = result4 / (size(window,1)*size(window,2)*255);
                     results4 = [results4; result4];
                 case 'C' % circle
                     template = double(mask_templates{1}>0);
                     template = imresize(template, size(window));
                     result1 = imabsdiff(template, window);
                     result1 = sum(result1(:));
-                    result1 = result1 / (size(window,1)*size(window,2));
+                    result1 = result1 / (size(window,1)*size(window,2)*255);
                     results1 = [results1; result1];
                 case 'D' % circle
                     template = double(mask_templates{1}>0);
                     template = imresize(template, size(window));
                     result1 = imabsdiff(template, window);
                     result1 = sum(result1(:));
-                    result1 = result1 / (size(window,1)*size(window,2));
+                    result1 = result1 / (size(window,1)*size(window,2)*255);
                     results1 = [results1; result1];
                 case 'E' % circle
                     template = double(mask_templates{1}>0);
                     template = imresize(template, size(window));
                     result1 = imabsdiff(template, window);
                     result1 = sum(result1(:));
-                    result1 = result1 / (size(window,1)*size(window,2));
+                    result1 = result1 / (size(window,1)*size(window,2)*255);
                     results1 = [results1; result1];
                 case 'F' % square
                     template = double(mask_templates{2}>0);
                     template = imresize(template, size(window));
                     result2 = imabsdiff(template, window);
                     result2 = sum(result2(:));
-                    result2 = result2 / (size(window,1)*size(window,2));
+                    result2 = result2 / (size(window,1)*size(window,2)*255);
                     results2 = [results2; result2];
             end
             

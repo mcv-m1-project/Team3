@@ -113,7 +113,9 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         switch decision_method
             case 'difference'
-                windowCandidates = filterCandidatesDifference(im, windowCandidates, grayscaleTemps, 0.2);
+                windowCandidates = filterCandidatesDifference(im, windowCandidates, grayscaleTemps, 0.02);
+            case 'correlation'
+                windowCandidates = filterCandidatesCorr(im, windowCandidates, grayscaleTemps, 0.7);
             case 'convolution'
                 windowCandidates = filterCandidatesConvolution(pixelCandidates, windowCandidates, mask_templates, 0.02);
             case 'chamfer'
@@ -154,8 +156,8 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         
-%         imshow(imresize(pixelCandidates, 1/RESCALE))
-%         
+        imshow(imresize(pixelCandidates, 1/RESCALE))
+        
 %         for a=1:size(windowAnnotations, 1)
 %             rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
 %         end 
@@ -394,18 +396,20 @@ function [windowCandidates] = ConvCandidateGenerationWindow(im, pixelCandidates,
 end
 
 function [windowCandidates] = CorrCandidateGenerationWindow(im, pixelCandidates, window_method, templates)
-    scales = [1.2]; %0.8 1.0 1.2 1.4];
+    scales = [0.7 0.8 1 1.2]; %0.8 1.0 1.2 1.4];
     windowCandidates = [];
-    threshods = [0.7 0.7 0.7 0.7];
+    threshods = [0.8 0.6 0.7 0.6];
     
     im = rgb2gray(im);
 
     for s=1:size(scales,2)
         templates = {imresize(templates{1}, scales(s)) imresize(templates{2}, scales(s)) imresize(templates{3}, scales(s)) imresize(templates{4}, scales(s))}; 
         windowCandidates = [windowCandidates; templateCorrelation(im, templates, threshods)];
+        %windowCandidates = NonMaxS(windowCandidates, 0.2, 'mean');
+        %windowCandidates = windowCandidates(pick);
     end
-    pick = max_nms(windowCandidates, 0.05);
-    windowCandidates = windowCandidates(pick);
+    windowCandidates = NonMaxS(windowCandidates, 0.05, 'mean');
+    %windowCandidates = windowCandidates(pick);
 end
 
 function [windowCandidates] = SubsCandidateGenerationWindow(im, pixelCandidates, window_method, templates )
