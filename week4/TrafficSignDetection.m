@@ -137,6 +137,10 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 error('Incorrect decision method defined');
                 return
         end
+        
+        % In order to compute pixel based metrics, we have to use only the
+        % pixels inside the windows found.
+        [ pixelCandidates ] = copyPixelsFromWindows(windowCandidates,pixelCandidates);
 
         % Because the image is resized, the window points shall be moved
         for a=1:size(windowCandidates, 1)
