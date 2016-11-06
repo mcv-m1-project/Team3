@@ -89,3 +89,18 @@ Parameters:
 **templates:** List of templates to match against each window candidate.
 
 **th:** All the window candidates with a similarity value (the lower the better) below this threshold will be kept.
+
+
+### Chamfer Template Matching with connected components
+Other approach could be with the connected components.
+```
+CCchamferTemplateMatching(BW,templates,threshold)
+```
+
+Parameters:
+
+**BW:** Segmented pixels.
+
+**templates:** List of templates to match against each window candidate.
+
+**threshold:** All the window candidates with a similarity value (the lower the better) below this threshold will be kept.
