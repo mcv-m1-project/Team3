@@ -7,8 +7,8 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
     f = dir(path_img);
     finalCandidates = [];
     
-    for th_low=0:9
-        for th_high=th_low+1:10
+    for th_low=0:0
+        for th_high=9:9
             for sigma=1:10
                 absDiff = 0;
                 corrDiff = 0;
@@ -21,7 +21,7 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
 
                             mask = edge(mask, 'Canny');
 
-                            im = edge(mask, 'Canny', [th_low/20 th_high/20], sqrt(sigma));
+                            im = edge(im, 'Canny', [th_low/10 th_high/10], sqrt(sigma));
 
                             absDiff = absDiff + imabsdiff(mask, im);%/ (size(mask,1)*(size(mask,2))));
                             corrDiff = corrDiff + (mask .* im);% / (size(mask,1)*(size(mask,2))));
@@ -51,7 +51,7 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
 
                         mask = edge(mask, 'Canny');
 
-                        im = edge(mask, 'Sobel', th/10, direction);
+                        im = edge(im, 'Sobel', th/10, cell2mat(direction));
 
                         absDiff = absDiff + imabsdiff(mask, im);%/ (size(mask,1)*(size(mask,2))));
                         corrDiff = corrDiff + (mask .* im);% / (size(mask,1)*(size(mask,2))));
@@ -63,7 +63,7 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
             absDiff = sum(sum(absDiff))/count;
             corrDiff = sum(sum(corrDiff))/count;
 
-            fprintf(file, 'Sobel: th: %f, direction: %s, absDiff: %f, corrDiff: %f\n', th_low/10, cell2mat(direction), absDiff, corrDiff);
+            fprintf(file, 'Sobel: th: %f, direction: %s, absDiff: %f, corrDiff: %f\n', th/10, cell2mat(direction), absDiff, corrDiff);
         end
     end
     
@@ -81,7 +81,7 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
 
                         mask = edge(mask, 'Canny');
 
-                        im = edge(mask, 'Prewitt', th/10, direction);
+                        im = edge(im, 'Prewitt', th/10, cell2mat(direction));
 
                         absDiff = absDiff + imabsdiff(mask, im);%/ (size(mask,1)*(size(mask,2))));
                         corrDiff = corrDiff + (mask .* im);% / (size(mask,1)*(size(mask,2))));
@@ -93,7 +93,7 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
             absDiff = sum(sum(absDiff))/count;
             corrDiff = sum(sum(corrDiff))/count;
 
-            fprintf(file, 'Prewitt: th: %f, direction: %s, absDiff: %f, corrDiff: %f\n', th_low/10, cell2mat(direction), absDiff, corrDiff);
+            fprintf(file, 'Prewitt: th: %f, direction: %s, absDiff: %f, corrDiff: %f\n', th/10, cell2mat(direction), absDiff, corrDiff);
         end
     end
     
@@ -110,7 +110,7 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
 
                     mask = edge(mask, 'Canny');
 
-                    im = edge(mask, 'Roberts', th/10, direction);
+                    im = edge(im, 'Roberts', th/10, cell2mat(direction));
 
                     absDiff = absDiff + imabsdiff(mask, im);%/ (size(mask,1)*(size(mask,2))));
                     corrDiff = corrDiff + (mask .* im);% / (size(mask,1)*(size(mask,2))));
@@ -122,11 +122,11 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
         absDiff = sum(sum(absDiff))/count;
         corrDiff = sum(sum(corrDiff))/count;
 
-        fprintf(file, 'Roberts: th: %f, absDiff: %f, corrDiff: %f\n', th_low/10, absDiff, corrDiff);
+        fprintf(file, 'Roberts: th: %f, absDiff: %f, corrDiff: %f\n', th/10, absDiff, corrDiff);
     end
     
-    for th_low=0:9
-        for th_high=th_low+1:10
+    for th_low=0
+        for th_high=9:9
             for sigma=1:10
                 absDiff = 0;
                 corrDiff = 0;
@@ -139,7 +139,7 @@ function [ output_args ] = cannyFinder( path_mask, path_img )
 
                             mask = edge(mask, 'Canny');
 
-                            im = edge(mask, 'Log', [th_low/20 th_high/20], sqrt(sigma));
+                            im = edge(im, 'log', [th_low/10 th_high/10], sqrt(sigma));
 
                             absDiff = absDiff + imabsdiff(mask, im);%/ (size(mask,1)*(size(mask,2))));
                             corrDiff = corrDiff + (mask .* im);% / (size(mask,1)*(size(mask,2))));
