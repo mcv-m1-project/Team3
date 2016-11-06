@@ -128,17 +128,31 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 
             case 'filterWindows'
                 windowCandidates = filterWindows(windowCandidates);
-            case 'CC'
-                im2=im;
-                im2=rgb2hsv(im2);imSat = im2;
-                imSat(:,:,2) = double(im2(:,:,2)*2);
-                imLum = imSat;
-                imLum(:,:,3) = double(imSat(:,:,3)*2);
-                BW=edgesDetection(imLum, 'gradeMagnitudMorpho', 'bwOtsu');
+           case 'CC'
                 load('mask_templates.mat');
                 templates=mask_templates;
-                windowCandidates =CCchamferTemplateMatching(BW,templates);
+                
+                %original images
+                
+                %threshold=120;
+                %im2=im;
+                %im2=rgb2hsv(im2);
+                %imSat = im2;
+                %imSat(:,:,2) = double(im2(:,:,2)*2);
+                %imLum = imSat;
+                % imLum(:,:,3) = double(imSat(:,:,3)*2);
+                %BW=edgesDetection(imLum, 'gradeMagnitudMorpho', 'bwOtsu');
+                 
+
+                %with mask results from week3
+                
+                threshold=10;
+                [ pixelCandidates ] = copyPixelsFromWindows(windowCandidates,pixelCandidates);
+                BW=edgesDetection(pixelCandidates, 'gradeMagnitudMorpho', 'bwOtsu');
+                
+                windowCandidates =CCchamferTemplateMatching(BW,templates,threshold);                
                 [ pixelCandidates ] = copyPixelsFromWindows(windowCandidates,BW);
+                pixelCandidates=imfill(pixelCandidates);
             otherwise
                 error('Incorrect decision method defined');
                 return

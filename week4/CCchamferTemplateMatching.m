@@ -1,4 +1,4 @@
-function [ windowCandidates ] = CCchamferTemplateMatching(BW,templates)
+function [ windowCandidates ] = CCchamferTemplateMatching(BW,templates,threshold)
     L = bwlabel(BW);
     Msum(1:max(max(L)))=0;
     signal(1:max(max(L)))=0;
@@ -6,7 +6,7 @@ function [ windowCandidates ] = CCchamferTemplateMatching(BW,templates)
     windowCandidates=[];
     for z=1:size(templates,2)
         template= imageCrop(templates{1,z});
-        %template=im2bw(template,graythresh(template));
+        template=im2bw(template,graythresh(template));
         for i=1:max(max(L))
             bw2(1:size(BW,1),1:size(BW,2))=0;
             bw2(L==i)=1;
@@ -37,7 +37,6 @@ function [ windowCandidates ] = CCchamferTemplateMatching(BW,templates)
         %bw2(L==indxMin)=1;
         %imshow(bw2);
     end
-    threshold=70;
     for j=1:max(max(L))
         if Msum(j)>threshold
             windowCandidates = [ windowCandidates; struct('x',double(BB(j,1)),'y',double(BB(j,2)),'w',double(BB(j,3)),'h',double(BB(j,4))) ];
