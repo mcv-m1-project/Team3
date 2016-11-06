@@ -98,19 +98,22 @@ files = ListFiles(directory);
     min(results1(:))
     max(results1(:))
     mean(results1(:))
+    std(results1(:))
     disp('Results template 2');
     min(results2(:))
     max(results2(:))
     mean(results2(:))
+    std(results2(:))
     disp('Results template 3');
     min(results3(:))
     max(results3(:))
     mean(results3(:))
+    std(results3(:))
     disp('Results template 4');
     min(results4(:))
     max(results4(:))
     mean(results4(:))
-
+    std(results4(:))
 
 end
 

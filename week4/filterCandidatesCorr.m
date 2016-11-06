@@ -3,7 +3,7 @@ function [ filteredCandidates ] = filterCandidatesCorr( im, windowCandidates, te
 %   Detailed explanation goes here
     filteredCandidates = [];  
     im = rgb2gray(im);
-
+    
 
     for i=1:size(windowCandidates,1)
         wc = windowCandidates(i);
@@ -17,7 +17,8 @@ function [ filteredCandidates ] = filterCandidatesCorr( im, windowCandidates, te
             mult = crop .* tmpl;
             val = sum(sum(mult)); 
             
-            val = val/(size(mult,1)*size(mult,2));
+            maxCorr = sum( sum( templates{1} .* templates{1} ) );
+            val = val/maxCorr; %(size(mult,1)*size(mult,2));
                         
             if(val > th ) 
                found = true; 
