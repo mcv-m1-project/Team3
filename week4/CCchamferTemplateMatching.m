@@ -6,6 +6,7 @@ function [ windowCandidates ] = CCchamferTemplateMatching(BW,templates)
     windowCandidates=[];
     for z=1:size(templates,2)
         template= imageCrop(templates{1,z});
+        %template=im2bw(template,graythresh(template));
         for i=1:max(max(L))
             bw2(1:size(BW,1),1:size(BW,2))=0;
             bw2(L==i)=1;

@@ -2,7 +2,7 @@
 % Template example for using on the test set (no annotations).
 % 
  
-function TrafficSignDetection_validation(input_dir, output_dir, pixel_method, window_method, decision_method)
+function TrafficSignDetection_test(input_dir, output_dir, pixel_method, window_method, decision_method)
     % TrafficSignDetection
     % Perform detection of Traffic signs on images. Detection is performed first at the pixel level
     % using a color segmentation. Then, using the color segmentation as a basis, the most likely window 
@@ -46,6 +46,10 @@ function TrafficSignDetection_validation(input_dir, output_dir, pixel_method, wi
 
     files = ListFiles(input_dir);
     
+    global RESCALE;         RESCALE = 1;
+    
+    mask_templates = {rgb2gray(imread('mask_templates/circle.png'))>0 rgb2gray(imread('mask_templates/square.png'))>0 rgb2gray(imread('mask_templates/triangle.png'))>0 rgb2gray(imread('mask_templates/triangle_down.png'))>0};
+
     mkdir(strcat(output_dir, '/test/'));
     
     for ii=1:size(files,1),
@@ -57,29 +61,84 @@ function TrafficSignDetection_validation(input_dir, output_dir, pixel_method, wi
      
         % Candidate Generation (pixel) %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         pixelCandidates = CandidateGenerationPixel_Color(im, pixel_method);
-        %element=strel('octagon',21);
-        element = strel('diamond', 4);
+        element=strel('diamond',4*RESCALE);
         pixelCandidates = morf(pixelCandidates, element);
         
-        % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
         switch window_method
             case 'slidingWindow'
                 windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
             case 'integral'
                 windowCandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
+                %windowCandidates = filterWindows(windowCandidates);
             case 'convolution'
                 windowCandidates = ConvCandidateGenerationWindow(im, pixelCandidates, window_method);
             case 'mergeIntegral'
                 windowCandidates = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
+                %windowCandidates = filterWindows(windowCandidates);
             case 'connectedComponents'
                 windowCandidates = ConnectedComponents(pixelCandidates);
+            case 'correlation'
+                windowCandidates = CorrCandidateGenerationWindow(im, pixelCandidates, window_method, grayscaleTemps);
+            case 'subtraction'
+                windowCandidates = SubsCandidateGenerationWindow(im, pixelCandidates, window_method, grayscaleTemps);
+            case 'maskchamfer'
+                windowCandidates = MaskChamferGenerationWindow(pixelCandidates, mask_templates);
+            case 'none'
+                
             otherwise
                 error('Incorrect window method defined');
                 return
         end
         
+        % Filter window candidates
+        switch decision_method
+            case 'difference'
+                windowCandidates = filterCandidatesDifference(im, windowCandidates, grayscaleTemps, 0.2);
+            case 'convolution'
+                windowCandidates = filterCandidatesConvolution(pixelCandidates, windowCandidates, mask_templates, 0.02);
+            case 'chamfer'
+                windowCandidates = filterCandidatesChamfer(pixelCandidates, windowCandidates, mask_templates, 0.45);
+            case 'none'
+                
+            case 'filterWindows'
+                windowCandidates = filterWindows(windowCandidates);
+            case 'CC'
+                im2=im;
+                im2=rgb2hsv(im2);imSat = im2;
+                imSat(:,:,2) = double(im2(:,:,2)*2);
+                imLum = imSat;
+                imLum(:,:,3) = double(imSat(:,:,3)*2);
+                BW=edgesDetection(imLum, 'gradeMagnitudMorpho', 'bwOtsu');
+                load('mask_templates.mat');
+                templates=mask_templates;
+                windowCandidates =CCchamferTemplateMatching(BW,templates);
+                [ pixelCandidates ] = copyPixelsFromWindows(windowCandidates,BW);
+            otherwise
+                error('Incorrect decision method defined');
+                return
+        end
+        
+        % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
+        
+%         imshow(imresize(pixelCandidates, 1/RESCALE))
+% 
+%         for a=1:size(windowCandidates, 1)
+%             rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
+%         end 
+% 
+%         waitforbuttonpress;
+%         waitforbuttonpress;
+        
+        % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        
+        % In order to compute pixel based metrics, we have to use only the
+        % pixels inside the windows found.
+        [ pixelCandidates ] = copyPixelsFromWindows(windowCandidates,pixelCandidates);
+        
+
         out_file1 = sprintf ('%s/test/pixelCandidates_%06d.png',  output_dir, ii);
-	    out_file2 = sprintf ('%s/test/pixelCandidates_%06d.mat', output_dir, ii);
+	    out_file2 = sprintf ('%s/test/windowCandidates_%06d.mat', output_dir, ii);
 
 	    imwrite (pixelCandidates, out_file1);
 	    save (out_file2, 'windowCandidates');        
@@ -99,7 +158,7 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
 
     im=double(im);
 
-     switch space
+    switch space
         case 'rgb'
             r_th = [11.8967, 56.8533, 52.7663];
             red_pixelCandidates = im(:,:,1) > r_th(1) & im(:,:,2) < r_th(2) & im(:,:,3) < r_th(3);
@@ -150,7 +209,7 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
             
             pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
         
-         case 'histEq'
+        case 'histEq'
             im = histogramEqualization(im);
             
             r_th = [0.1757    0.7075    0.6895];
@@ -160,8 +219,8 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
             blue_pixelCandidates = im(:,:,1) < b_th(1) & im(:,:,2) < b_th(2) & im(:,:,3) > b_th(3);
             
             pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
-         
-         case 'hbp'
+        
+        case 'hbp'
             imhsv = rgb2hsv(im);
             im_h = imhsv(:,:,1);
             im_s = imhsv(:,:,2);
@@ -194,7 +253,7 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
             error('Incorrect color space defined');
             return
     end
-end    
+end     
     
 
 function [windowCandidates] = CandidateGenerationWindow(im, pixelCandidates, window_method)
@@ -222,24 +281,26 @@ end
 
 function [windowCandidates] = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method)
     iImg = cumsum(cumsum(double(pixelCandidates)),2);
-    sizes = [32 64];
+    global RESCALE;
+    sizes = [24*RESCALE 32*RESCALE 44*RESCALE 52*RESCALE 64*RESCALE 80*RESCALE 92*RESCALE 108*RESCALE 128*RESCALE 136*RESCALE];
     windowCandidates = [];
     for s=1:length(sizes)
-        windowCandidates = [ windowCandidates; IntegralSlidingWindow(iImg, 8, sizes(s), sizes(s), 0.5, 1) ];
-        windowCandidates = NonMaxS(windowCandidates, 0.2);
+        windowCandidates = [ windowCandidates; IntegralSlidingWindow(iImg, sizes(s)/4, sizes(s), sizes(s), 0.5, 1) ];
+        windowCandidates = NonMaxS(windowCandidates, 0.2, 'mean');
     end
-    windowCandidates = NonMaxS(windowCandidates, 0.2);
+    windowCandidates = NonMaxS(windowCandidates, 0.2, 'mean');
 end
 
 function [windowCandidates] = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method)
     iImg = cumsum(cumsum(double(pixelCandidates)),2);
-    windowCandidates = IntegralSlidingWindow(iImg, 10, 40, 40, 0.6, 1);
+    global RESCALE;
+    windowCandidates = IntegralSlidingWindow(iImg, 10*RESCALE, 40*RESCALE, 40*RESCALE, 0.6, 1);
 
-    new_windowCandidates = NonMaxS(windowCandidates, 0.3);
+    new_windowCandidates = NonMaxS(windowCandidates, 0.3, 'merge');
 
     while length(new_windowCandidates) ~= length(windowCandidates)
         windowCandidates = new_windowCandidates;
-        new_windowCandidates = NonMaxS(windowCandidates, 0.3);
+        new_windowCandidates = NonMaxS(windowCandidates, 0.3, 'merge');
     end
     windowCandidates = new_windowCandidates;
     
@@ -253,4 +314,53 @@ function [windowCandidates] = ConvCandidateGenerationWindow(im, pixelCandidates,
         windowCandidates = NonMaxS(windowCandidates, 0.2);
     end
     windowCandidates = NonMaxS(windowCandidates, 0.2);
+end
+
+function [windowCandidates] = CorrCandidateGenerationWindow(im, pixelCandidates, window_method, templates)
+    scales = [0.6]; %0.8 1.0 1.2 1.4];
+    windowCandidates = [];
+    threshods = [0.7 0.7 0.7 0.7];
+    
+    im = rgb2gray(im);
+
+    for s=1:size(scales,2)
+        templates = {imresize(templates{1}, scales(s)) imresize(templates{2}, scales(s)) imresize(templates{3}, scales(s)) imresize(templates{4}, scales(s))}; 
+        windowCandidates = [windowCandidates; templateCorrelation(im, templates, threshods)];
+    end
+    pick = max_nms(windowCandidates, 0.05);
+    windowCandidates = windowCandidates(pick);
+end
+
+function [windowCandidates] = SubsCandidateGenerationWindow(im, pixelCandidates, window_method, templates )
+    scales = [0.4 0.6]; %0.8 1.0 1.2 1.4];
+    windowCandidates = [];
+    threshods = [0.68 0.88 0.44 0.43];
+    
+    im = rgb2gray(im);
+    
+    for s=1:size(scales,2)
+        templates = {imresize(templates{1}, scales(s)) imresize(templates{2}, scales(s)) imresize(templates{3}, scales(s)) imresize(templates{4}, scales(s))}; 
+        windowCandidates = [windowCandidates; templateSubstraction(im, templates, threshods)];
+    end
+    pick = min_nms(windowCandidates, 0.05);
+    windowCandidates = windowCandidates(pick);
+end
+
+function [windowCandidates] = MaskChamferGenerationWindow(pixelCandidates, mask_templates)
+
+    windowCandidates = [];
+    scales = [0.4 0.6 0.8 1.0 1.2 1.4];
+    
+    edg = edge(pixelCandidates, 'Canny');
+    if ~any(edg(:))
+        return
+    end
+    dist = bwdist(edg);
+    
+    for s=1:size(scales,2)
+        templates = {imresize(mask_templates{1}, scales(s)) imresize(mask_templates{2}, scales(s)) imresize(mask_templates{3}, scales(s)) imresize(mask_templates{4}, scales(s))}; 
+        windowCandidates = [windowCandidates; MaskChamferWCandidates(templates, dist)];
+    end
+    pick = min_nms(windowCandidates, 0.05);
+    windowCandidates = windowCandidates(pick);
 end

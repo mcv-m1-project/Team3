@@ -13,7 +13,6 @@ function [ filteredCandidates ] = filterCandidatesDifference(  im, windowCandida
         for j=1:size(templates,2)
             tmpl = imresize(templates{j}, [size(crop,1) size(crop,2)]);
             
-            
             diff = imabsdiff(crop, tmpl);            
             val = sum(sum(diff));
             val = val/(size(diff,1)*size(diff,2)*255);
@@ -24,7 +23,7 @@ function [ filteredCandidates ] = filterCandidatesDifference(  im, windowCandida
         end
         
         if found==true
-            filteredCandidates = [ filteredCandidates; windowCandidates(i)];
+            filteredCandidates = [ filteredCandidates; wc];
         end
     end
 end

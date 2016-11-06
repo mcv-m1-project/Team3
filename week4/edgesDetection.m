@@ -14,10 +14,13 @@ end
 switch edges
     case 'Sobel'
         BW = edge(I,'Sobel');
+        BW=imclose(BW,[0 1; 1 0]);   %contours not closed
+        %BW = xor(bwareaopen(I,1),  bwareaopen(I,10000));
     case 'Prewitt'
         BW = edge(I,'Prewitt');
     case 'Canny'
         BW = edge(I,'Canny');
+        
     case 'Roberts'
         BW = edge(I,'Roberts');
     case 'log'
@@ -40,9 +43,11 @@ switch edges
         %I=imopen(I,ee);   %contours not closed
         [Gx, Gy] = imgradientxy(I);
         [BW, Gdir] = imgradient(Gx, Gy);
-        %BW = imclose(BW,ee); %remove noise
+       % BW = imdilate(BW,[1 1 1 ;1 1 1; 1 1 1]); %remove noise
+        %BW=edge(BW,'log');
         BW = bwmorph(BW,'thin'); %thinning
-        BW = xor(bwareaopen(I,200),  bwareaopen(I,1000));
+        
+        BW = xor(bwareaopen(BW,200),  bwareaopen(BW,30000));
     otherwise
         error('Edges detector method not valid.');
 end

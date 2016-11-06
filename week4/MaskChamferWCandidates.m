@@ -13,7 +13,7 @@ function [ windowCandidates ] = MaskChamferWCandidates( templates, dist)
         template = flipud(fliplr(template));
         C = conv2(dist,template,'same');
 
-        [coords_y, coords_x] = find((C./(ti*tj))<0.5); % Threshold found in findChamferTh.m
+        [coords_y, coords_x] = find((C./(ti*tj))<0.35); % Threshold found in findChamferTh.m
         
         for i=1:size(coords_y,1)
             Gmin = C(coords_y(i), coords_x(i));
