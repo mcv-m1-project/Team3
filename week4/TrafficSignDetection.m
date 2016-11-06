@@ -390,7 +390,7 @@ function [windowCandidates] = ConvCandidateGenerationWindow(im, pixelCandidates,
 end
 
 function [windowCandidates] = CorrCandidateGenerationWindow(im, pixelCandidates, window_method, templates)
-    scales = [0.6]; %0.8 1.0 1.2 1.4];
+    scales = [1.2]; %0.8 1.0 1.2 1.4];
     windowCandidates = [];
     threshods = [0.7 0.7 0.7 0.7];
     

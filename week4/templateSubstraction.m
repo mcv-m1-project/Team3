@@ -3,6 +3,7 @@ function [ windowCandidates ] = templateSubstraction( im, templates, thr )
 %   Detailed explanation goes here
     global RESCALE;
     
+    sumDiff = @(x) sum(sum())
     step = 1;
     [rows, cols] = size(im);
     [ti tj] = size(templates{1});
