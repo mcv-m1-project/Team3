@@ -3,6 +3,47 @@ Introduction to Human and Computer Vision project - week 4
 
 ## Task 1 - Template matching using correlation
 
+### Global Approach
+This function computes the correlation between a given set of templates and the grayscale image
+How to run it:
+```
+templateCorrelation( im, templates, thrs )
+```
+```
+templateCorrelation( im, templates, thrs )
+```
+Parameters:
+
+**im:** Grayscale image
+
+**templates:** List of templates to be used, grayscale
+
+**thrs:** Thresholds to be used for each signal type
+
+It returns a list of all the Window Candidates found.
+
+
+### Filter of Bounding Boxes
+The function is called after the candidate windows are detected with the filling ratio, then with the correlation this windows are filtered.
+How to run it:
+```
+filterCandidatesCorr( im, windowCandidates, templates, th )
+```
+```
+filterCandidatesDifference( im, windowCandidates, templates, th )
+```
+Parameters:
+
+**im:** Grayscale image
+
+**windowCandidates:** List of templates to be used, grayscale
+
+**templates:** List of templates to be used, grayscale
+
+**th:** Threshold to be used to discard boundig boxes
+
+It returns a list of the filtered Window Candidates.
+
 
 ## Task 2 - Template matching using Distance Transform and chamfer distance
 
