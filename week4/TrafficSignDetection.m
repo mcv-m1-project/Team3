@@ -92,12 +92,10 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
             case 'integral'
                 windowCandidates = IntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
-                %windowCandidates = filterWindows(windowCandidates);
             case 'convolution'
                 windowCandidates = ConvCandidateGenerationWindow(im, pixelCandidates, window_method);
             case 'mergeIntegral'
                 windowCandidates = MergeIntegralCandidateGenerationWindow(im, pixelCandidates, window_method);
-                %windowCandidates = filterWindows(windowCandidates);
             case 'connectedComponents'
                 windowCandidates = ConnectedComponents(pixelCandidates);
             case 'correlation'
@@ -122,6 +120,8 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 windowCandidates = filterCandidatesChamfer(pixelCandidates, windowCandidates, mask_templates, 0.45);
             case 'none'
                 
+            case 'filterWindows'
+                windowCandidates = filterWindows(windowCandidates);
             case 'CC'
                 im2=im;
                 im2=rgb2hsv(im2);imSat = im2;
