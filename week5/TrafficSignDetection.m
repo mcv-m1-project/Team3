@@ -153,6 +153,9 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 windowCandidates =CCchamferTemplateMatching(BW,templates,threshold);                
                 [ pixelCandidates ] = copyPixelsFromWindows(windowCandidates,BW);
                 pixelCandidates=imfill(pixelCandidates);
+                
+            case 'geometricHeuristics'
+                windowCandidates = filterCandidatesHough( windowCandidates );
             otherwise
                 error('Incorrect decision method defined');
                 return
@@ -176,7 +179,6 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         %imshow(imresize(pixelCandidates, 1/RESCALE))
         
-<<<<<<< HEAD
         for a=1:size(windowAnnotations, 1)
             rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
         end 
@@ -187,18 +189,6 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
 
         %waitforbuttonpress;
         %waitforbuttonpress;
-=======
-%         for a=1:size(windowAnnotations, 1)
-%             rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
-%         end 
-% 
-%         for a=1:size(windowCandidates, 1)
-%             rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
-%         end 
-% 
-%         waitforbuttonpress;
-%         waitforbuttonpress;
->>>>>>> a81402d797d228995d7acc5f415b38b578355ba2
         
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
