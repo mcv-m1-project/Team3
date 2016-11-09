@@ -156,7 +156,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 pixelCandidates=imfill(pixelCandidates);
                 
             case 'geometricHeuristics'
-                windowCandidates = filterCandidatesHough( windowCandidates, pixelCandidates );
+                windowCandidates = filterCandidatesHough( windowCandidates, pixelCandidates, im );
             otherwise
                 error('Incorrect decision method defined');
                 return
