@@ -19,6 +19,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
     %    'decision_method'   'GeometricHeuristics' or 'TemplateMatching' (Weeks 4-5)
 
     addpath('evaluation')
+    addpath('templateMatching')
 
     global CANONICAL_W;        CANONICAL_W = 64;
     global CANONICAL_H;        CANONICAL_H = 64;
@@ -155,7 +156,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
                 pixelCandidates=imfill(pixelCandidates);
                 
             case 'geometricHeuristics'
-                windowCandidates = filterCandidatesHough( windowCandidates );
+                windowCandidates = filterCandidatesHough( windowCandidates, pixelCandidates );
             otherwise
                 error('Incorrect decision method defined');
                 return
