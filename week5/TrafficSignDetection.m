@@ -81,6 +81,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         im = imread(strcat(directory,'/',files(i).name));
         
         im = imresize(im, RESCALE);
+        orig = im;
         
         %im2 = edge(im, 'Roberts', 0);
         %imshow(im2);
@@ -93,6 +94,8 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
         switch window_method
+            case 'ucm'
+                [pixelCandidates, windowCandidates] = ucmCandidates(orig, 0.3);
             case 'slidingWindow'
                 windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
             case 'integral'
@@ -164,7 +167,9 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % In order to compute pixel based metrics, we have to use only the
         % pixels inside the windows found.
-        [ pixelCandidates ] = copyPixelsFromWindows(windowCandidates,pixelCandidates);
+        if window_method ~= 'ucm'
+            [ pixelCandidates ] = copyPixelsFromWindows(windowCandidates,pixelCandidates);
+        end
 
         % Because the image is resized, the window points shall be moved
         for a=1:size(windowCandidates, 1)
@@ -196,6 +201,10 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         % Accumulate pixel performance of the current image %%%%%%%%%%%%%%%%%
         pixelAnnotation = imread(strcat(directory, '/mask/mask.', files(i).name(1:size(files(i).name,2)-3), 'png'))>0;
         pixelAnnotation = imresize(pixelAnnotation, RESCALE);
+        
+        if window_method == 'ucm'
+            pixelCandidates = imresize(pixelCandidates, [size(pixelAnnotation,1) size(pixelAnnotation,2)]);
+        end
         
         [localPixelTP, localPixelFP, localPixelFN, localPixelTN] = PerformanceAccumulationPixel(pixelCandidates, pixelAnnotation);
         pixelTP = pixelTP + localPixelTP;

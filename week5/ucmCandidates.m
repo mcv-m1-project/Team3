@@ -1,14 +1,17 @@
-function [ windowCandidates ] = ucmCandidates( im, th )
+function [ edged, windowCandidates ] = ucmCandidates( im, th )
 %UNTITLED4 Summary of this function goes here
 %   Detailed explanation goes here
 
 % Read an input image
-I = imread(im);
+%I = imread(im);
+I = im;
 
 % tic;
 % Test the 'fast' version, which takes around 5 seconds in mean
 [candidates_scg, ucm2_scg] = im2mcg(I,'fast');
 % toc;
+
+edged = imdilate(ucm2_scg,strel(ones(3))) > 0.6;
 
 
 % Bboxes is a matrix that contains the four coordinates of the bounding box
