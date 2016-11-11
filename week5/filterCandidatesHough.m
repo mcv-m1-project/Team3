@@ -14,14 +14,14 @@ function [ windowC ] = filterCandidatesHough( windowCandidates, pixelCandidates,
         BW = edge(crop, 'Canny');
         cropGray = rgb2gray( imcrop(im, [jj ii jjSize iiSize]) );
         
-        if size(cropGray, 1) < 32 && size(cropGray, 2) < 32
-            cropGray = imresize(cropGray, [33 33]);
+        if size(cropGray, 1) < 32 || size(cropGray, 2) < 32
+            cropGray = imresize(cropGray, 1.5);
         end
 %         fltr4img = [1 1 1 1 1; 1 2 2 2 1; 1 2 4 2 1; 1 2 2 2 1; 1 1 1 1 1];
 %         fltr4img = fltr4img / sum(fltr4img(:));
 %         cropGray = filter2( fltr4img , cropGray );
         radRange = [jjSize/4  jjSize/2];
-        [accum circen cirrad] = CircularHough_Grd(cropGray, [10 70], 10, 4);
+        [accum circen cirrad] = CircularHough_Grd(cropGray, [10 70], 10, 5);
         
         
         

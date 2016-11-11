@@ -167,7 +167,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % In order to compute pixel based metrics, we have to use only the
         % pixels inside the windows found.
-        if window_method ~= 'ucm'
+        if ~strcmp(window_method, 'ucm') % window_method ~= 'ucm'
             [ pixelCandidates ] = copyPixelsFromWindows(windowCandidates,pixelCandidates);
         end
 
@@ -202,7 +202,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         pixelAnnotation = imread(strcat(directory, '/mask/mask.', files(i).name(1:size(files(i).name,2)-3), 'png'))>0;
         pixelAnnotation = imresize(pixelAnnotation, RESCALE);
         
-        if window_method == 'ucm'
+        if strcmp(window_method, 'ucm')
             pixelCandidates = imresize(pixelCandidates, [size(pixelAnnotation,1) size(pixelAnnotation,2)]);
         end
         
