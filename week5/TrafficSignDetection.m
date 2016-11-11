@@ -183,18 +183,18 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         
-        imshow(imresize(pixelCandidates, 1/RESCALE))
-        
-        for a=1:size(windowAnnotations, 1)
-            rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
-        end 
-
-        for a=1:size(windowCandidates, 1)
-            rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
-        end 
-
-        waitforbuttonpress;
-        waitforbuttonpress;
+%         imshow(imresize(pixelCandidates, 1/RESCALE))
+%         
+%         for a=1:size(windowAnnotations, 1)
+%             rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
+%         end 
+% 
+%         for a=1:size(windowCandidates, 1)
+%             rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
+%         end 
+% 
+%         waitforbuttonpress;
+%         waitforbuttonpress;
         
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         

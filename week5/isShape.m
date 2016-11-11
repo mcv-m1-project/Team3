@@ -39,10 +39,16 @@ function [ isT ] = isShape( lines, shape )
             theta23 = acosd((norm(vdir2(1)*vdir3(1)+vdir2(2)*vdir3(2))) / ...
                 (sqrt((vdir2(1)^2)+(vdir2(2)^2))*sqrt((vdir3(1)^2)+(vdir3(2)^2))));
 
-            if theta12 < 100 && theta12 > 80 && theta13 < 100 && theta13 > 80 && theta23 < 100 && theta23 > 80
+            if (theta12 < 100 && theta12 > 80 && theta13 < 100 && theta13 > 80) && theta23 < 10 || theta23 > 350
                 isT = true;
-            elseif theta12 < 10 && theta12 > 350 && theta13 < 10 && theta13 > 350 && theta23 < 10 && theta23 > 350
-                isT = true;    
+            elseif theta12 < 10 || theta12 > 350 && (theta13 < 100 && theta13 > 80 && theta23 < 350 && theta23 > 10)
+                isT = true;
+            elseif (theta12 < 100 && theta12 > 80 && theta23 < 100 && theta23 > 80) && theta13 < 10 || theta13 > 350
+                isT = true;
+            elseif theta12 < 10 || theta12 > 350 && (theta13 < 10 && theta13 > 350 && theta23 < 10 && theta23 > 350)
+                isT = true;
+            elseif (theta12 < 10 || theta12 > 350) && (theta13 < 10 || theta13 > 350) && (theta23 < 10 || theta23 > 350)
+                isT = true;
             end
             
         otherwise
