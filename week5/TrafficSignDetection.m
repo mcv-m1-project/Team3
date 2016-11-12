@@ -359,6 +359,45 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
             end
             pixelCandidates = reshape(pixelCandidates, size(im_h));
             
+        case 'mean_shift'
+            load('clustCent.mat');
+            load('clustMembsCell.mat');
+            Kms = length(clustMembsCell);
+            
+            im = NormRGB(double(im));
+            
+            dists = zeros(size(im,1), size(im,2), Kms);
+            for k=1:Kms
+                dist_r = im(:,:,1)-clustCent(1,k);
+                dist_g = im(:,:,2)-clustCent(2,k);
+                dist_b = im(:,:,3)-clustCent(3,k);
+                dists(:,:,k) = dist_r.^2 + dist_g.^2 + dist_b.^2;
+            end
+            [~, mins] = min(dists, [], 3);
+
+            for i=1:size(im,1)
+                for j=1:size(im,2)
+                    im(i,j,:) = clustCent(:,mins(i,j));
+                end
+            end
+            
+            imhsv = rgb2hsv(im);
+            im_h = imhsv(:,:,1);
+            im_s = imhsv(:,:,2);
+            im_v = imhsv(:,:,3);
+
+            v_th = [0.1*255 1*255];
+
+            r_th = [0.96    0.04     0.1];
+            red_pixelCandidates = (im_h > r_th(1) | im_h < r_th(2)) & im_s > r_th(3);
+
+            b_th = [0.56    0.76     0.1];
+            blue_pixelCandidates = im_h > b_th(1) & im_h < b_th(2) & im_s > b_th(3);
+
+            pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
+
+            pixelCandidates(round(size(pixelCandidates, 1)/2):end, :) = 0;
+            
         otherwise
             error('Incorrect color space defined');
             return

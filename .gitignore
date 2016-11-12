@@ -6,5 +6,8 @@ DataSetDelivered/
 *.txt
 !week4/mask_templates.mat
 !week4/grayscaleTemps.mat
+!week5/mask_templates.mat
+!week5/grayscaleTemps.mat
+!week5/mask_templates/*
 SplitDataset/
 *.m~
