@@ -95,7 +95,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         % Candidate Generation (window)%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%        
         switch window_method
             case 'ucm'
-                [pixelCandidates, windowCandidates] = ucmCandidates(orig, 0.3);
+                [pixelCandidates, windowCandidates] = ucmCandidates(orig, 0.0);
             case 'slidingWindow'
                 windowCandidates = CandidateGenerationWindow(im, pixelCandidates, window_method); %%'SegmentationCCL' or 'SlidingWindow'  (Needed after Week 3)
             case 'integral'
@@ -167,7 +167,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         % In order to compute pixel based metrics, we have to use only the
         % pixels inside the windows found.
-        if window_method ~= 'ucm'
+        if ~strcmp(window_method, 'ucm') % window_method ~= 'ucm'
             [ pixelCandidates ] = copyPixelsFromWindows(windowCandidates,pixelCandidates);
         end
 
@@ -181,10 +181,10 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         
         windowAnnotations = LoadAnnotations(strcat(directory, '/gt/gt.', files(i).name(1:size(files(i).name,2)-3), 'txt'));   
         
-        % %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%% Print candidate windows %%%%%%%%%%%%%%%%
         
-        %imshow(imresize(pixelCandidates, 1/RESCALE))
-        
+%         imshow(imresize(pixelCandidates, 1/RESCALE))
+%         
 %         for a=1:size(windowAnnotations, 1)
 %             rectangle('Position',[windowAnnotations(a).x ,windowAnnotations(a).y ,windowAnnotations(a).w,windowAnnotations(a).h],'EdgeColor','r');
 %         end 
@@ -192,9 +192,9 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
 %         for a=1:size(windowCandidates, 1)
 %             rectangle('Position',[windowCandidates(a).x ,windowCandidates(a).y ,windowCandidates(a).w,windowCandidates(a).h],'EdgeColor','c');
 %         end 
-
-        %waitforbuttonpress;
-        %waitforbuttonpress;
+% 
+%         waitforbuttonpress;
+%         waitforbuttonpress;
         
         % %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
@@ -202,7 +202,7 @@ function TrafficSignDetection(directory, pixel_method, window_method, decision_m
         pixelAnnotation = imread(strcat(directory, '/mask/mask.', files(i).name(1:size(files(i).name,2)-3), 'png'))>0;
         pixelAnnotation = imresize(pixelAnnotation, RESCALE);
         
-        if window_method == 'ucm'
+        if strcmp(window_method, 'ucm')
             pixelCandidates = imresize(pixelCandidates, [size(pixelAnnotation,1) size(pixelAnnotation,2)]);
         end
         

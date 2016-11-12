@@ -12,6 +12,7 @@ I = im;
 % toc;
 
 edged = imdilate(ucm2_scg,strel(ones(3))) > 0.6;
+edged = imresize(edged, 0.5);
 
 
 % Bboxes is a matrix that contains the four coordinates of the bounding box
