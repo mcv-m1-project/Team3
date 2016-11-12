@@ -17,6 +17,7 @@ function [ output_args ] = test_masks( input_args )
         all = all | pixelAnnotation;
     end
 
+    imshow(all);
 
 end
 

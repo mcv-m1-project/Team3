@@ -4,8 +4,7 @@ function [ output_args ] = full_train_mean_shift( input_args )
     directory = '../SplitDataset/train/';
     files = ListFiles(directory);
 
-    nFiles = size(files, 1);
-
+    nFiles = size(files, 1
     Xall = [];
     tic
     for i=1:nFiles
@@ -13,38 +12,16 @@ function [ output_args ] = full_train_mean_shift( input_args )
         I = imread(strcat(directory,'/',files(i).name));
         I = imresize(I, 0.5);
 
-        I_all = NormRGB(double(I));
+        I = NormRGB(double(I));
         %I = rgb2hsv(I);
         
-        %imshow(I);
-        %waitforbuttonpress
+        X = reshape(I,size(I,1)*size(I,2),3); % Color Features
+        %X = reshape(I(:,:,1:2),size(I,1)*size(I,2),2); % Color Features
+        X = unique(X, 'rows');
         
-        wA = LoadAnnotations(strcat(directory, '/gt/gt.', files(i).name(1:size(files(i).name,2)-3), 'txt')); 
-        for a=1:size(wA, 1)
-            wA(a).x = round(wA(a).x * 0.5);
-            wA(a).y = round(wA(a).y * 0.5);
-            wA(a).w = round(wA(a).w * 0.5);
-            wA(a).h = round(wA(a).h * 0.5);
-            
-            if wA(a).x == 0
-                wA(a).x = 1;
-            end
-            if wA(a).y == 0
-                wA(a).y = 1;
-            end
-            %imshow(I(wA(a).y:wA(a).y+wA(a).h, wA(a).x:wA(a).x+wA(a).w, :))
-            %waitforbuttonpress
-            I = I_all(wA(a).y:wA(a).y+wA(a).h, wA(a).x:wA(a).x+wA(a).w, :);
-            
-            X = reshape(I,size(I,1)*size(I,2),3); % Color Features
-            %X = reshape(I(:,:,1:2),size(I,1)*size(I,2),2); % Color Features
-            X = unique(X, 'rows');
-
-            Xall = [Xall;X];
-            %Xall = unique(Xall, 'rows');Xall
-            %size(Xall)
-        end 
-        
+        Xall = [Xall;X];
+        %Xall = unique(Xall, 'rows');Xall
+        %size(Xall)
     end
 
     size(Xall)
@@ -52,7 +29,7 @@ function [ output_args ] = full_train_mean_shift( input_args )
     toc
     
     %% MEAN-SHIFT
-    bandwidth = 0.06; %norm_rgb = 0.05;
+    bandwidth = 0.05; %norm_rgb = 0.05;
     % MeanShiftCluster
     tic
     [clustCent,point2cluster,clustMembsCell] = MeanShiftCluster(Xall',bandwidth);
