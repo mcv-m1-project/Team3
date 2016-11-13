@@ -397,7 +397,9 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
             pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
 
             pixelCandidates(round(size(pixelCandidates, 1)/2):end, :) = 0;
-            
+        case 'kmeans'
+            im=uint8(im);
+            pixelCandidates=kmeans (im);   
         otherwise
             error('Incorrect color space defined');
             return
