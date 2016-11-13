@@ -122,6 +122,8 @@ function TrafficSignDetection_test(input_dir, output_dir, pixel_method, window_m
                 templates=mask_templates;
                 windowCandidates =CCchamferTemplateMatching(BW,templates);
                 [ pixelCandidates ] = copyPixelsFromWindows(windowCandidates,BW);
+            case 'geometricHeuristics'
+                windowCandidates = filterCandidatesHough( windowCandidates, pixelCandidates, im );
             otherwise
                 error('Incorrect decision method defined');
                 return
@@ -257,6 +259,47 @@ function [pixelCandidates] = CandidateGenerationPixel_Color(im, space)
             end
             pixelCandidates = reshape(pixelCandidates, size(im_h));
             
+        case 'mean_shift'
+            load('clustCent.mat');
+            load('clustMembsCell.mat');
+            Kms = length(clustMembsCell);
+            
+            im = NormRGB(double(im));
+            
+            dists = zeros(size(im,1), size(im,2), Kms);
+            for k=1:Kms
+                dist_r = im(:,:,1)-clustCent(1,k);
+                dist_g = im(:,:,2)-clustCent(2,k);
+                dist_b = im(:,:,3)-clustCent(3,k);
+                dists(:,:,k) = dist_r.^2 + dist_g.^2 + dist_b.^2;
+            end
+            [~, mins] = min(dists, [], 3);
+
+            for i=1:size(im,1)
+                for j=1:size(im,2)
+                    im(i,j,:) = clustCent(:,mins(i,j));
+                end
+            end
+            
+            imhsv = rgb2hsv(im);
+            im_h = imhsv(:,:,1);
+            im_s = imhsv(:,:,2);
+            im_v = imhsv(:,:,3);
+
+            v_th = [0.1*255 1*255];
+
+            r_th = [0.96    0.04     0.1];
+            red_pixelCandidates = (im_h > r_th(1) | im_h < r_th(2)) & im_s > r_th(3);
+
+            b_th = [0.56    0.76     0.1];
+            blue_pixelCandidates = im_h > b_th(1) & im_h < b_th(2) & im_s > b_th(3);
+
+            pixelCandidates = red_pixelCandidates | blue_pixelCandidates;
+
+            pixelCandidates(round(size(pixelCandidates, 1)/2):end, :) = 0;
+        case 'kmeans'
+            im=uint8(im);
+            pixelCandidates=kmeans (im);   
         otherwise
             error('Incorrect color space defined');
             return
@@ -293,7 +336,7 @@ function [windowCandidates] = IntegralCandidateGenerationWindow(im, pixelCandida
     sizes = [24*RESCALE 32*RESCALE 44*RESCALE 52*RESCALE 64*RESCALE 80*RESCALE 92*RESCALE 108*RESCALE 128*RESCALE 136*RESCALE];
     windowCandidates = [];
     for s=1:length(sizes)
-        windowCandidates = [ windowCandidates; IntegralSlidingWindow(iImg, sizes(s)/4, sizes(s), sizes(s), 0.5, 1) ];
+        windowCandidates = [ windowCandidates; IntegralSlidingWindow(iImg, 4*RESCALE, sizes(s), sizes(s), 0.5, 1) ];
         windowCandidates = NonMaxS(windowCandidates, 0.2, 'mean');
     end
     windowCandidates = NonMaxS(windowCandidates, 0.2, 'mean');

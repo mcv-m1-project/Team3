@@ -15,7 +15,7 @@ function [ windowC ] = filterCandidatesHough( windowCandidates, pixelCandidates,
         cropGray = rgb2gray( imcrop(im, [jj ii jjSize iiSize]) );
         
         if size(cropGray, 1) < 32 || size(cropGray, 2) < 32
-            cropGray = imresize(cropGray, 1.5);
+            cropGray = imresize(cropGray, 3);
         end
 %         imshow(cropGray);
 %         waitforbuttonpress;
@@ -23,21 +23,21 @@ function [ windowC ] = filterCandidatesHough( windowCandidates, pixelCandidates,
 %         fltr4img = fltr4img / sum(fltr4img(:));
 %         cropGray = filter2( fltr4img , cropGray );
         radRange = [double(jjSize/4)  double(jjSize/2)];
-        [accum circen cirrad] = CircularHough_Grd(cropGray, radRange, 15, 5);
+        [accum circen cirrad] = CircularHough_Grd(cropGray, radRange, 15, 7);
         
         
         
         if ~isempty(cirrad)
-            figure; imagesc(crop); colormap('gray'); axis image;
-            hold on;
-            plot(circen(:,1), circen(:,2), 'r+');
-            for k = 1 : size(circen, 1),
-                DrawCircle(circen(k,1), circen(k,2), cirrad(k), 32, 'g-');
-            end
-            hold off;
-            waitforbuttonpress;
+%             figure; imagesc(crop); colormap('gray'); axis image;
+%             hold on;
+%             plot(circen(:,1), circen(:,2), 'r+');
+%             for k = 1 : size(circen, 1),
+%                 DrawCircle(circen(k,1), circen(k,2), cirrad(k), 32, 'g-');
+%             end
+%             hold off;
+%             waitforbuttonpress;
              windowC = [windowC ; struct('x', windowCandidates(i).x, 'y', windowCandidates(i).y, 'w', windowCandidates(i).w, 'h', windowCandidates(i).h)];
-            disp('cirlce');
+%             disp('cirlce');
         else
             [H theta rho] = hough(BW, 'Theta', -90:5:89);
             peaks = houghpeaks(H, 3);
@@ -47,13 +47,13 @@ function [ windowC ] = filterCandidatesHough( windowCandidates, pixelCandidates,
                 isT = isShape(lines, 'Triangle');
                 isS = isShape(lines, 'Square');
                 if isT
-                    disp('is triangle')
+%                     disp('is triangle')
                     windowC = [windowC ; struct('x', windowCandidates(i).x, 'y', windowCandidates(i).y, 'w', windowCandidates(i).w, 'h', windowCandidates(i).h)];
                 elseif isS
-                    disp('is square');
+%                     disp('is square');
                     windowC = [windowC ; struct('x', windowCandidates(i).x, 'y', windowCandidates(i).y, 'w', windowCandidates(i).w, 'h', windowCandidates(i).h)];
                 else
-                    disp('nothing detected');
+%                     disp('nothing detected');
                 end
             end
 
