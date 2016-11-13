@@ -28,14 +28,14 @@ function [ windowC ] = filterCandidatesHough( windowCandidates, pixelCandidates,
         
         
         if ~isempty(cirrad)
-            figure; imagesc(crop); colormap('gray'); axis image;
-            hold on;
-            plot(circen(:,1), circen(:,2), 'r+');
-            for k = 1 : size(circen, 1),
-                DrawCircle(circen(k,1), circen(k,2), cirrad(k), 32, 'g-');
-            end
-            hold off;
-            waitforbuttonpress;
+%             figure; imagesc(crop); colormap('gray'); axis image;
+%             hold on;
+%             plot(circen(:,1), circen(:,2), 'r+');
+%             for k = 1 : size(circen, 1),
+%                 DrawCircle(circen(k,1), circen(k,2), cirrad(k), 32, 'g-');
+%             end
+%             hold off;
+%             waitforbuttonpress;
              windowC = [windowC ; struct('x', windowCandidates(i).x, 'y', windowCandidates(i).y, 'w', windowCandidates(i).w, 'h', windowCandidates(i).h)];
             disp('cirlce');
         else
