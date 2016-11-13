@@ -122,6 +122,8 @@ function TrafficSignDetection_test(input_dir, output_dir, pixel_method, window_m
                 templates=mask_templates;
                 windowCandidates =CCchamferTemplateMatching(BW,templates);
                 [ pixelCandidates ] = copyPixelsFromWindows(windowCandidates,BW);
+            case 'geometricHeuristics'
+                windowCandidates = filterCandidatesHough( windowCandidates, pixelCandidates, im );
             otherwise
                 error('Incorrect decision method defined');
                 return

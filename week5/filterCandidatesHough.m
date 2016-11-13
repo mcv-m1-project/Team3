@@ -23,7 +23,7 @@ function [ windowC ] = filterCandidatesHough( windowCandidates, pixelCandidates,
 %         fltr4img = fltr4img / sum(fltr4img(:));
 %         cropGray = filter2( fltr4img , cropGray );
         radRange = [double(jjSize/4)  double(jjSize/2)];
-        [accum circen cirrad] = CircularHough_Grd(cropGray, radRange, 15, 5);
+        [accum circen cirrad] = CircularHough_Grd(cropGray, radRange, 15, 7);
         
         
         
